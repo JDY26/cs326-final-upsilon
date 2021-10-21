@@ -1,0 +1,17 @@
+body{
+    margin: 0;
+    padding: 0;
+    background-color: lightslategray;
+}
+#userAvatar{
+    width: 150px;
+}
+.userFeed{
+    background-color:darkslategray;
+}
+.userPost{
+    background-color: lightslategray;
+}
+.userHeader{
+    background-color: lightsteelblue;
+}
