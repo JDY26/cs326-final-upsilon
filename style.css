@@ -1,0 +1,17 @@
+.site-background{
+    background-color:maroon;
+}
+
+.site-element{
+    background-color: white;
+}
+
+.center-img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.text-back{
+    color: white;
+}
