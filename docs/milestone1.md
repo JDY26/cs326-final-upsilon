@@ -21,7 +21,7 @@ This is the page where users would either login or signup.
 This is a sample user profile which would have the person's profile pic, name, graduating class, and some things they uploaded.
 ![image](userPage.png)
 ![image](homePage.png)
-![image](signIn)
+![image](signinPage.png)
 
 ## Breakup of Work:
 For the wireframes, Casey created the User Page, Julia created the Sign-Up/Login Page, and James created the Home Page. Each person was responsible for the HTML and CSS for their respective page as well.
