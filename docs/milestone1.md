@@ -20,7 +20,7 @@ This is the page where users would either login or signup.
 ![image](wireframe/Milestone1-UserPage.png)
 This is a sample user profile which would have the person's profile pic, name, graduating class, and some things they uploaded.
 ![image](userPage.png)
-![image](homePage.png)
+![image](homePage.PNG)
 ![image](signinPage.png)
 
 ## Breakup of Work:
