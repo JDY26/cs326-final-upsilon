@@ -23,3 +23,21 @@
 .thumbnail{
     width: 5rem;
 }
+
+.buttons{
+    margin-bottom: 1em;
+}
+
+.song-card{
+    width: 90%;
+    margin: auto;
+}
+
+.overflow-test{
+    width: 50%;
+    height: 10rem;
+    margin: auto;
+    display: inline-block;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
