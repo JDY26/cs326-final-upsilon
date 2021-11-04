@@ -3,15 +3,16 @@ Objects:
         Profile Picture
         Name
         Biography
-        Array of (owned) Post Objects
+        Array of (owned) Post Objects Unique IDs
         Username
         Unique ID (?)
 
     Post Object
-        Type (video, image, etc)
+        Type (song, image, etc)
+        Content (JSON, just image URL for image, but album art URL and audio file for song)
         Name
         Description
-        Tags
+        Tags (JSON)
         Timestamp
         Owner
         Unique ID (?)
