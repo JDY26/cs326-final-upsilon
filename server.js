@@ -2,6 +2,23 @@ const express = require('express');
 const app = express();
 const port = 8080;
 
+//Links to pages
+
+//homePage
+app.use('/', express.static('pages/homePage/'));
+
+//userPage
+app.use('/users/exampleuser', express.static('pages/userPage/'));
+
+//signinPage
+
+app.use('/login', express.static('pages/signinPage/'));
+
+
+
+
+//---------------------
+//API Stuff 
 //User Endpoints
 
 //create user
@@ -45,4 +62,8 @@ app.get('/posts/:id', function (req, res) {
 //delete post. need POST for auth ?
 app.post('/posts/:id/delete', function (req, res) {
 
+});
+
+app.listen(port, () => {
+    console.log(`app listening on port ${port}`);
 });
