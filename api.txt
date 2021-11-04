@@ -1,0 +1,39 @@
+Objects:
+    User Object
+        Profile Picture
+        Name
+        Biography
+        Array of (owned) Post Objects
+        Username
+        Unique ID (?)
+
+    Post Object
+        Type (video, image, etc)
+        Name
+        Description
+        Tags
+        Timestamp
+        Owner
+        Unique ID (?)
+
+API:
+    User:
+        Create: POST /users/new
+            Create user account
+        Update: POST /users/:id
+            Change picture, name, bio, or add a Post Object
+        Read:   GET /users/:id
+            Get all contents (to be rendered)
+        Delete: POST /users/:id/delete
+            Delete user account
+    
+    Post:
+        Create: POST /posts/new
+            Create new Post Object
+        Update: POST /posts/:id
+            Edit Name, Description, or Tags
+        Read:   GET /posts/:id
+            Get all contents and a link to img/video content in DB
+        Delete: POST /posts/:id/delete
+            Delete post
+
