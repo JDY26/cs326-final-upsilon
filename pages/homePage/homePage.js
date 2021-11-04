@@ -23,3 +23,13 @@ window.addEventListener("scroll", () => {
     }
     lastScrollTop = scrollTop;
 });
+
+//render a single post
+//Take the div surrounding all of the cards
+//Make a card
+//Fetch img, name, user, likes, timestamp
+//Append it to the parent with an id
+//Initially Sort By Popular
+//Store number of likes
+
+//
