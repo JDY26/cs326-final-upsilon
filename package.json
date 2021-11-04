@@ -1,0 +1,26 @@
+{
+    "name": "cs326-final-upsilon",
+    "version": "1.0.0",
+    "description": "",
+    "main": "server.js",
+    "directories": {
+      "doc": "docs"
+    },
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/JDY26/cs326-final-upsilon.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/JDY26/cs326-final-upsilon/issues"
+    },
+    "homepage": "https://github.com/JDY26/cs326-final-upsilon#readme",
+    "dependencies": {
+      "express": "^4.17.1",
+      "faker": "^5.5.3"
+    }
+  }
