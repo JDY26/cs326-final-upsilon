@@ -69,7 +69,7 @@ app.get('/posts/:id', function (req, res) {
     postdata['contentType'] = postTypes[Math.floor(Math.random()* 3)];//get a random postType
     postdata['name'] = faker.lorem.words();
     postdata['description'] = faker.lorem.sentences();
-    postdata['timestamp'] = faker.datatype.timestamp();
+    postdata['timestamp'] = faker["datatype"].timestamp;
     postdata['owner'] = faker.internet.userName();
     postdata['uid'] = req.params.id;
     postdata['tags'] = faker.datatype.json();

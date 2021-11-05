@@ -33,7 +33,7 @@ window.addEventListener("scroll", () => {
 //Store number of likes
 
 async function makeCard(id){
-    const response = await fetch("http://localhost:8080/posts/1");
+    const response = await fetch("https://cs326-finalupsilon.herokuapp.com/posts/1");
     const json = await response.json();
 
     const row = document.getElementById(id);
