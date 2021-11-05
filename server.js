@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 8080;
+const port = 80;
 const faker = require('faker');
 //https://github.com/Marak/Faker.js#readme
 //Links to pages
@@ -90,6 +90,6 @@ app.post('/posts/:id/delete', function (req, res) {
     res.send("Post deleted");
 });
 
-app.listen(port, () => {
-    console.log(`app listening on port ${port}`);
+app.listen(process.env.PORT, () => {
+    console.log(`app listening on port ${process.env.PORT}`);
 });
