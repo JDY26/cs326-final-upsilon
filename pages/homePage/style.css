@@ -1,9 +1,9 @@
 .site-background{
-    background-color:maroon;
+    background-color: darkslategray;
 }
 
 .site-element{
-    background-color: white;
+    background-color: lightsteelblue;
 }
 
 .center-img{
@@ -18,6 +18,7 @@
 
 .home-image{
     width: 18rem;
+    margin-top: 4rem;
 }
 
 .thumbnail{

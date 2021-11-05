@@ -32,29 +32,35 @@ window.addEventListener("scroll", () => {
 //Initially Sort By Popular
 //Store number of likes
 
-async function makeCard(){
+async function makeCard(id){
     const response = await fetch("http://localhost:8080/posts/1");
     const json = await response.json();
-    console.log(json);
 
-    const row = document.getElementById("exampleCat");
+    const row = document.getElementById(id);
     const card = document.createElement("div");
-    card.classList.add("card", "col-3");
+    card.classList.add("card", "col-3", "site-element");
     const img = document.createElement("img");
     img.src = "download.jpg";
     img.classList.add("card-img-top", "center-img");
     card.appendChild(img);
     const cardTitle = document.createElement("h5");
-    cardTitle.classList.add("card-title", "text-center");
+    cardTitle.classList.add("card-title", "text-center", "display-6");
     cardTitle.textContent = json["name"];
     card.appendChild(cardTitle);
-    const cardSubtitle = document.createElement("h6");
+    const cardSubtitle = document.createElement("h5");
     cardSubtitle.classList.add("card-subtitle", "text-muted", "text-center");
     cardSubtitle.textContent = json["owner"];
     card.appendChild(cardSubtitle);
+    const timestamp = document.createElement("p");
+    timestamp.classList.add("card-subtitle", "text-muted", "small");
+    timestamp.textContent = json["timestamp"];
+    card.appendChild(timestamp);
     row.appendChild(card);
 }
 
-makeCard().then();
-makeCard().then();
-makeCard().then();
+makeCard("music").then();
+makeCard("music").then();
+makeCard("music").then();
+makeCard("art").then();
+makeCard("art").then();
+makeCard("art").then();
