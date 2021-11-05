@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const port = 8080;
 const faker = require('faker');
-
+//https://github.com/Marak/Faker.js#readme
 //Links to pages
 
 //homePage
@@ -24,12 +24,14 @@ app.use('/login', express.static('pages/signinPage/'));
 
 //create user
 app.post('/users/new', function (req, res) {
-
+    res.status(201);
+    res.send("User created");
 });
 
 //update user
 app.post('/users/:id', function (req, res) {
-
+    res.status(200);
+    res.send("User updated");
 })
 
 //read user
@@ -41,12 +43,14 @@ app.get('/users/:id', function (req, res) {
     userdata['username'] = faker.internet.userName();
     userdata['uid'] = req.params.id;
     userdata['posts'] = [Math.floor(Math.random()*1000), Math.floor(Math.random()*1000), Math.floor(Math.random()*1000), Math.floor(Math.random()*1000)];
+    res.status(200);
     res.send(JSON.stringify(userdata));
 });
 
 //delete user. Uses POST for authentication (?)
 app.post('/users/:id/delete', function (req, res) {
-
+    res.status(200);
+    res.send("User deleted");
 });
 
 //--------------------------------------------------------
@@ -54,12 +58,14 @@ app.post('/users/:id/delete', function (req, res) {
 
 //create post
 app.post('/posts/new', function (req, res) {
-
+    res.status(201);
+    res.send("Post Created");
 });
 
 //update post
 app.post('/posts/:id', function (req, res) {
-
+    res.status(200);
+    res.send("Post updated");
 });
 
 //read post
@@ -74,12 +80,14 @@ app.get('/posts/:id', function (req, res) {
     postdata['uid'] = req.params.id;
     postdata['tags'] = faker.datatype.json();
     postdata['content'] = faker.datatype.json();
+    res.status(200);
     res.send(JSON.stringify(postdata));
 });
 
 //delete post. need POST for auth ?
 app.post('/posts/:id/delete', function (req, res) {
-
+    res.status(200);
+    res.send("Post deleted");
 });
 
 app.listen(port, () => {
