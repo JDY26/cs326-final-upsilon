@@ -33,11 +33,7 @@
     margin: auto;
 }
 
-.overflow-test{
-    width: 50%;
-    height: 10rem;
-    margin: auto;
-    display: inline-block;
-    overflow-x: scroll;
-    overflow-y: hidden;
+.card{
+    margin-left: 25px;
+    margin-right: 25px;
 }

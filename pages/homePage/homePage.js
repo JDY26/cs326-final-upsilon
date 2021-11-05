@@ -15,7 +15,7 @@ document.getElementById("popular").addEventListener("click", () => {
 window.addEventListener("scroll", () => {
     const scrollTop = window.pageYOffset;
     const navbar = document.getElementsByClassName("navbar")[0];
-    const lastScrollTop = 0;
+    let lastScrollTop = 0;
     if(scrollTop > lastScrollTop){
         navbar.style.top="-80px";
     } else {
@@ -32,4 +32,29 @@ window.addEventListener("scroll", () => {
 //Initially Sort By Popular
 //Store number of likes
 
-//
+async function makeCard(){
+    const response = await fetch("http://localhost:8080/posts/1");
+    const json = await response.json();
+    console.log(json);
+
+    const row = document.getElementById("exampleCat");
+    const card = document.createElement("div");
+    card.classList.add("card", "col-3");
+    const img = document.createElement("img");
+    img.src = "download.jpg";
+    img.classList.add("card-img-top", "center-img");
+    card.appendChild(img);
+    const cardTitle = document.createElement("h5");
+    cardTitle.classList.add("card-title", "text-center");
+    cardTitle.textContent = json["name"];
+    card.appendChild(cardTitle);
+    const cardSubtitle = document.createElement("h6");
+    cardSubtitle.classList.add("card-subtitle", "text-muted", "text-center");
+    cardSubtitle.textContent = json["owner"];
+    card.appendChild(cardSubtitle);
+    row.appendChild(card);
+}
+
+makeCard().then();
+makeCard().then();
+makeCard().then();
