@@ -1,0 +1,40 @@
+.site-background{
+    background-color: darkslategray;
+}
+
+.site-element{
+    background-color: lightsteelblue;
+}
+
+.center-img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.text-back{
+    color: white;
+}
+
+.home-image{
+    width: 18rem;
+    margin-top: 4rem;
+}
+
+.thumbnail{
+    width: 5rem;
+}
+
+.buttons{
+    margin-bottom: 1em;
+}
+
+.song-card{
+    width: 90%;
+    margin: auto;
+}
+
+.card{
+    margin-left: 25px;
+    margin-right: 25px;
+}
