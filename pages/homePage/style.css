@@ -1,9 +1,9 @@
 .site-background{
-    background-color:maroon;
+    background-color: darkslategray;
 }
 
 .site-element{
-    background-color: white;
+    background-color: lightsteelblue;
 }
 
 .center-img{
@@ -18,8 +18,23 @@
 
 .home-image{
     width: 18rem;
+    margin-top: 4rem;
 }
 
 .thumbnail{
     width: 5rem;
+}
+
+.buttons{
+    margin-bottom: 1em;
+}
+
+.song-card{
+    width: 90%;
+    margin: auto;
+}
+
+.card{
+    margin-left: 25px;
+    margin-right: 25px;
 }
