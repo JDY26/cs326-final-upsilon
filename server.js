@@ -17,6 +17,9 @@ app.use('/users/exampleuser', express.static('pages/userPage/'));
 
 app.use('/login', express.static('pages/signinPage/'));
 
+// signupPage
+app.use('/register', express.static('pages/signupPage'));
+
 
 app.use(bodyParser.urlencoded({extended: false}))
 //---------------------
@@ -31,7 +34,6 @@ app.post('/users/new', function (req, res) {
 
 // login user
 app.post('/signin', (req, res) => {
-    console.log(req.body)
     res.status(200);
     let username = req.body.floatingInput;
     let password = req.body.floatingPassword;
