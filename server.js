@@ -71,8 +71,8 @@ app.post('/posts/:id', function (req, res) {
 //read post
 app.get('/posts/:id', function (req, res) {
     let postdata = {};
-    const postTypes = ['image', 'audio', 'video']
-    postdata['contentType'] = postTypes[Math.floor(Math.random()* 3)];//get a random postType
+    const postTypes = ['image', 'audio']
+    postdata['contentType'] = postTypes[Math.floor(Math.random()* 2)];//get a random postType
     postdata['name'] = faker.lorem.words();
     postdata['description'] = faker.lorem.sentences();
     postdata['timestamp'] = faker.datatype.timestamp;
