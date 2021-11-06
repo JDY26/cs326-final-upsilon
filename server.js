@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 80;
+//const port = 80;
 const faker = require('faker');
 //https://github.com/Marak/Faker.js#readme
 //Links to pages
