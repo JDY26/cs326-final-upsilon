@@ -30,6 +30,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.post('/users/new', function (req, res) {
     res.status(201);
     res.send("User created");
+    res.redirect('/');
 });
 
 // login user
