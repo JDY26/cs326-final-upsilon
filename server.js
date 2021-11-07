@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 80;
+//const port = 80;
 const faker = require('faker');
 //https://github.com/Marak/Faker.js#readme
 //Links to pages
@@ -9,7 +9,7 @@ const faker = require('faker');
 app.use('/', express.static('pages/homePage/'));
 
 //userPage
-app.use('/users/exampleuser', express.static('pages/userPage/'));
+app.use('/userPages/exampleuser', express.static('pages/userPage/'));
 
 //signinPage
 
@@ -43,6 +43,7 @@ app.get('/users/:id', function (req, res) {
     userdata['username'] = faker.internet.userName();
     userdata['uid'] = req.params.id;
     userdata['posts'] = [Math.floor(Math.random()*1000), Math.floor(Math.random()*1000), Math.floor(Math.random()*1000), Math.floor(Math.random()*1000)];
+    userdata['yog'] = Math.floor(Math.random() * 5)+2021;
     res.status(200);
     res.send(JSON.stringify(userdata));
 });
@@ -71,15 +72,21 @@ app.post('/posts/:id', function (req, res) {
 //read post
 app.get('/posts/:id', function (req, res) {
     let postdata = {};
-    const postTypes = ['image', 'audio', 'video']
-    postdata['contentType'] = postTypes[Math.floor(Math.random()* 3)];//get a random postType
+    const postTypes = ['image', 'audio']
+    postdata['contentType'] = postTypes[Math.floor(Math.random()* 2)];//get a random postType
     postdata['name'] = faker.lorem.words();
     postdata['description'] = faker.lorem.sentences();
     postdata['timestamp'] = faker.datatype.timestamp;
     postdata['owner'] = faker.internet.userName();
     postdata['uid'] = req.params.id;
-    postdata['tags'] = faker.datatype.json();
-    postdata['content'] = faker.datatype.json();
+    let tag1 = faker.lorem.word();
+    let tag2 = faker.lorem.word();
+    let subtags1 = [faker.lorem.word(), faker.lorem.word()];
+    let subtags2 = [faker.lorem.word()];
+    postdata['tags'] = {"l1tags":[tag1,tag2]};
+    postdata['tags'][tag1] = subtags1;
+    postdata['tags'][tag2] = subtags2;
+    postdata['content'] = postdata['contentType'] === 'image' ? {"imageUrl": faker.image.city()} : {"albumArt": faker.image.nightlife(), "songUrl": faker.internet.url()};
     res.status(200);
     res.send(JSON.stringify(postdata));
 });
