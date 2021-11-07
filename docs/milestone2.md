@@ -59,3 +59,7 @@ This is a dynamically generated user's page, which reads from the users API to g
 - - [Sign-in Page](https://cs326-finalupsilon.herokuapp.com/login/)
 - - [Sign-up Page](https://cs326-finalupsilon.herokuapp.com/register/)
 - - Sign in and create new user endpoints
+
+- James
+- - [Home Page](https://cs326-finalupsilon.herokuapp.com/)
+- - Home Page and some Express server/API

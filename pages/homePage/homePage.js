@@ -1,4 +1,4 @@
-const popular = document.getElementsByClassName("popular")
+/*const popular = document.getElementsByClassName("popular")
 
 for(button of popular){
     button.addEventListener("click", () => {
@@ -14,7 +14,7 @@ for(button of popular){
         art.innerHTML = null;
         art.appendChild(newCards);
     });
-}
+}*/
 
 window.addEventListener("scroll", () => {
     const scrollTop = window.pageYOffset;
@@ -44,7 +44,7 @@ async function makeCard(id){
     const card = document.createElement("div");
     card.classList.add("card", "col-3", "site-element");
     const img = document.createElement("img");
-    img.src = "download.jpg";
+    img.src = post["contentType"] === "audio" ? post["content"]["albumArt"] : post["contentType"]["imageUrl"];
     img.classList.add("card-img-top", "center-img");
     card.appendChild(img);
     const cardTitle = document.createElement("h5");
