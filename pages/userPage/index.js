@@ -90,8 +90,8 @@ function generateArtCard(image, title, description){
                   <div class="row">
                     <div class="col">
                       <div class="btn-group float-end" role="group">
-                        <button type="button" class="btn btn-warning float-end">Edit</button>
-                        <button type="button" class="btn btn-danger float-end">Delete</button>
+                        <button type="button" class="btn btn-warning float-end editPost">Edit</button>
+                        <button type="button" class="btn btn-danger float-end deletePost">Delete</button>
                       </div>
                     </div>
                   </div>
@@ -119,7 +119,7 @@ async function generatePosts(){
       postHtml += generateArtCard(post["content"]["imageUrl"],post["name"],post["description"],post["tags"]);
     }
     else{
-      console.error("Contenty type is not audio or image");
+      console.error("Content type is not audio or image");
     }
     postElem.innerHTML = postHtml;
     generateTags(post['tags'], postElem);
