@@ -39,4 +39,16 @@ API:
 - - Delete: POST /posts/:id/delete
 - - - Delete post
 
+## Screenshots
+![image](deletePost.png)
+This is the button a user will press to delete a post that they made
+![image](editPost.png)
+This is the button a user will press to edit a post that they made
+![image](readPage.png)
+This is a dynamically generated user's page, which reads from the users API to generate its content
 ## Heroku App URL: https://cs326-finalupsilon.herokuapp.com/
+
+## Division of labor
+- Casey
+- - [User Profile Page](https://cs326-finalupsilon.herokuapp.com/userPages/exampleUser/)
+- - Decent amount of Express server/API
