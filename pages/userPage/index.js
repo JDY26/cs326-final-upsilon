@@ -53,8 +53,8 @@ function generateMusicCard(albumURL, songURL, title, description){
       <div class="row">
         <div class="col">
           <div class="btn-group float-end" role="group">
-            <button type="button" class="btn btn-warning float-end">Edit</button>
-            <button type="button" class="btn btn-danger float-end">Delete</button>
+            <button type="button" class="btn btn-warning float-end editPost">Edit</button>
+            <button type="button" class="btn btn-danger float-end deletePost">Delete</button>
           </div>
         </div>
       </div>
@@ -123,6 +123,30 @@ async function generatePosts(){
     }
     postElem.innerHTML = postHtml;
     generateTags(post['tags'], postElem);
+    postElem.getElementsByClassName('deletePost')[0].addEventListener('click', async () =>{
+      try {     
+        const response = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${userData["posts"][i]}/delete`, {
+          method: 'post',
+          body: {
+            // delete post here
+          }
+        });
+      } catch(err) {
+        console.error(`Error: ${err}`);
+      }    
+    });
+    postElem.getElementsByClassName('editPost')[0].addEventListener('click', async ()=>{
+      try {     
+        const response = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${userData["posts"][i]}`, {
+          method: 'post',
+          body: {
+            //edit post here
+          }
+        });
+      } catch(err) {
+        console.error(`Error: ${err}`);
+      }    
+    });
     document.getElementById('userFeed').appendChild(postElem);
   };  
 }
