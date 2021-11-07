@@ -133,7 +133,7 @@ async function fillInHeader(){
   bioDiv.appendChild(bio);
 
   let yog = document.createElement('p');
-  yog.innerText = userData['yog'];
+  yog.innerText = `Class of ${userData['yog']}`;
   yogDiv.appendChild(yog);
 }
 fillInHeader();
