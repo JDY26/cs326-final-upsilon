@@ -43,6 +43,7 @@ app.get('/users/:id', function (req, res) {
     userdata['username'] = faker.internet.userName();
     userdata['uid'] = req.params.id;
     userdata['posts'] = [Math.floor(Math.random()*1000), Math.floor(Math.random()*1000), Math.floor(Math.random()*1000), Math.floor(Math.random()*1000)];
+    userdata['yog'] = Math.floor(Math.random() * 5)+2021;
     res.status(200);
     res.send(JSON.stringify(userdata));
 });

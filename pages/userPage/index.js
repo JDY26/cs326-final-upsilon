@@ -110,4 +110,31 @@ async function generatePosts(){
     document.getElementById('userFeed').appendChild(postElem);
   };  
 }
+async function fillInHeader(){
+  let userId = window.location.pathname.split('/').slice(-2)[0];
+  let response = await fetch(`https://cs326-finalupsilon.herokuapp.com/users/${userId}`);
+  let userData = await response.json();
+  let avatarDiv = document.getElementById('userAvatar');
+  let nameDiv = document.getElementById('name');
+  let bioDiv = document.getElementById('bio');
+  let yogDiv = document.getElementById('yog');
+  
+  let avatar = document.createElement('img');
+  avatar.src = userData['picture'];
+  avatar.classList.add('rounded-circle');
+  avatarDiv.appendChild(avatar);
+
+  let name = document.createElement('h2');
+  name.innerText = userData['name'];
+  nameDiv.appendChild(name);
+
+  let bio = document.createElement('p');
+  bio.innerText = userData['biography'];
+  bioDiv.appendChild(bio);
+
+  let yog = document.createElement('p');
+  yog.innerText = userData['yog'];
+  yogDiv.appendChild(yog);
+}
+fillInHeader();
 generatePosts();
