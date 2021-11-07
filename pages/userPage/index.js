@@ -94,12 +94,16 @@ async function generatePosts(){
     postElem.classList.add('userFeed');
     let postHtml = '';
     //postHtml += '<li class="list-group-item userFeed">';
-    let post = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${userData["posts"][i]}`)
+    let postResponse = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${userData["posts"][i]}`)
+    let post = await postResponse.json();
     if(post["contentType"] === "audio"){
       postHtml += generateMusicCard(post["content"]["albumArt"],post["content"]["songUrl"],post["name"],post["description"],post["tags"]);
     }
     else if(post["contentType"] === "image"){
       postHtml += generateArtCard(post["content"]["imageUrl"],post["name"],post["description"],post["tags"]);
+    }
+    else{
+      console.error("Contenty type is not audio or image");
     }
     postElem.innerHTML = postHtml;
     document.getElementById('userFeed').appendChild(postElem);
