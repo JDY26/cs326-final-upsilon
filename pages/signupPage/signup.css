@@ -1,0 +1,28 @@
+body {
+    background-color: white;
+}
+
+h1 {
+    color: #b2bec3;
+}
+
+.sign-up {
+    width: 100%;
+    max-width: 500px;
+    background-color: #2d3436;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    padding-left: 70px;
+    padding-right: 70px;
+    color: #b2bec3;
+}
+
+.sign-up .btn-primary {
+    margin-top: 15px;
+    background-color: #b2bec3;
+    border-color: #b2bec3;
+}
+
+.sign-up .footer {
+    padding-top: 15px;
+}
