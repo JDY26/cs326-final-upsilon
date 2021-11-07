@@ -29,6 +29,9 @@ app.use(bodyParser.urlencoded({extended: false}))
 //create user
 app.post('/users/new', function (req, res) {
     res.status(201);
+    let username = req.body.floatingInput;
+    let password = req.body.floatingPassword;
+    console.log(`username: ${username}, password: ${password}`);
     res.send("User created");
     res.redirect('/');
 });
