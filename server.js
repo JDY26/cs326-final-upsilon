@@ -90,6 +90,6 @@ app.post('/posts/:id/delete', function (req, res) {
     res.send("Post deleted");
 });
 
-app.listen(process.env.PORT, () => {
+app.listen(8080, () => {
     console.log(`app listening on port ${process.env.PORT}`);
 });

@@ -1,5 +1,3 @@
-const e = require("express");
-
 function generateTags(tags, postElement){;
   let htmlStr = '';
   let closingStack = [];
@@ -19,7 +17,7 @@ function generateTags(tags, postElement){;
   }
   postElement.getElementsByClassName("tagList")[0].innerHTML = htmlStr;
 }
-function generateMusicCard(albumURL, songURL, title, description, tags){
+function generateMusicCard(albumURL, songURL, title, description){
   let musicCardCopy = `
   <div class="card mb-3 userPost">
       <div class="row">
@@ -113,57 +111,26 @@ let musicCard = `
 return musicCard;
 }
 
-function generateArtCard(image, title, description, tags){
+function generateArtCard(image, title, description){
   let artCard = `
   <div class="card-mb-3 userPost">
                   <div class="row">
                     <div class="col-md-6 artImage">
-                      <img src="./exampleart.jpeg" class="img-fluid rounded-start" alt="...">
+                      <img src=${image} class="img-fluid rounded-start" alt="...">
                     </div>
                     <div class="col-md-4">
                       <div class="card-body">
                         <h2 class="card-text d-flex postTitle">
-                          Name of artwork
+                          ${title}
                         </h2>
                         <p class="card-text d-flex postDescription">
-                          This is a description about the artwork
+                          ${description}
                         </p>
                       </div>
                     </div>
                     <div class="col-md-2">
                       <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                          <li class="list-group-item d-flex userPost">
-                            <div class="row">
-                              <div class="col-md-4">
-                                <span class="badge rounded-pill bg-secondary">Art</span>
-                              </div>
-                              <div class="col-md-4">
-                                <br>
-                                <span class="badge rounded-pill bg-secondary">Digital</span>
-                                <br>
-                                <br>
-                                <span class="badge rounded-pill bg-secondary">Abstract</span>
-                                <span class="badge rounded-pill bg-secondary">Colorful</span>
-                              </div>
-                              <div class="col-md-4">
-                                <br>
-                                <br>
-                                <span class="badge rounded-pill bg-secondary">Render</span>
-                              </div>
-                            </div>
-                          </li>
-                          <li class="list-group-item d-flex userPost">
-                            <div class="row">
-                              <div class="col-md-4">
-                                <span class="badge rounded-pill bg-secondary">Seasonal</span>
-                              </div>
-                              <div class="col-md-4">
-                                <br>
-                                <span class="badge rounded-pill bg-secondary">Fall</span>
-                              </div>
-                            </div>
-                          </li>
+                        <ul class="list-group list-group-flush tagList">
                         </ul>
                       </div>
                     </div>
@@ -172,31 +139,24 @@ function generateArtCard(image, title, description, tags){
   `
   return artCard;
 }
-let userId = window.location.pathname.split('/').slice(-1)[0];
-let userData = await fetch(`https://cs326-finalupsilon.herokuapp.com/users/${userId}`);
-let feedHtml = '';
-for(let i = 0; i < userData["posts"].length; i++){
-  let postElem = document.createElement('li');
-  postElem.classList.add('list-group-item userFeed');
-  let postHtml = '';
-  //postHtml += '<li class="list-group-item userFeed">';
-  let post = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${userData["posts"][i]}`)
-  if(post["contentType"] === "audio"){
-    postHtml += generateMusicCard(post["content"]["albumArt"],post["content"]["songUrl"],post["name"],post["description"],post["tags"]);
-  }
-  else if(post["contentType"] === "image"){
-    postHtml += generateArtCard(post["content"]["imageUrl"],post["name"],post["description"],post["tags"]);
-  }
-  postElem.innerHTML = postHtml;
-  document.getElementById('userFeed').appendChild(postElem);
-};
-let innerhtml = `
-          <li class="list-group-item userFeed">
-              ${generateMusicCard(null,null,null,null,null)}
-          </li>
-          <li class="list-group-item userFeed">
-            ${generateArtCard(null,null,null,null)}
-          </li>
-          `
-
-document.getElementById('userFeed').innerHTML = innerhtml;
+async function generatePosts(){
+  let userId = window.location.pathname.split('/').slice(-1)[0];
+  let userData = await fetch(`https://cs326-finalupsilon.herokuapp.com/users/${userId}`);
+  let feedHtml = '';
+  for(let i = 0; i < userData["posts"].length; i++){
+    let postElem = document.createElement('li');
+    postElem.classList.add('list-group-item userFeed');
+    let postHtml = '';
+    //postHtml += '<li class="list-group-item userFeed">';
+    let post = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${userData["posts"][i]}`)
+    if(post["contentType"] === "audio"){
+      postHtml += generateMusicCard(post["content"]["albumArt"],post["content"]["songUrl"],post["name"],post["description"],post["tags"]);
+    }
+    else if(post["contentType"] === "image"){
+      postHtml += generateArtCard(post["content"]["imageUrl"],post["name"],post["description"],post["tags"]);
+    }
+    postElem.innerHTML = postHtml;
+    document.getElementById('userFeed').appendChild(postElem);
+  };  
+}
+generatePosts();
