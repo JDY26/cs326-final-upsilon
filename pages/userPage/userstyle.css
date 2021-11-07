@@ -7,13 +7,13 @@ body{
     width: 150px;
 }
 .userFeed{
-    background-color:#2d3436;
+    background-color: darkslategray;
 }
 .userPost{
     background-color: white;
-    color: #2d3436
+    color: darkslategray;
 }
 .userHeader{
-    background-color: #2d3436;
+    background-color:darkslategray;
     color:white
 }

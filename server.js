@@ -9,7 +9,7 @@ const faker = require('faker');
 app.use('/', express.static('pages/homePage/'));
 
 //userPage
-app.use('/users/exampleuser', express.static('pages/userPage/'));
+app.use('/userPages/exampleuser', express.static('pages/userPage/'));
 
 //signinPage
 
