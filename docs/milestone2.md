@@ -20,6 +20,8 @@ Objects:
 
 API:
 - User:
+- - POST /signin
+- - - Handles credentials required for sign in
 - - Create: POST /users/new
 - - - Create user account
 - - Update: POST /users/:id
@@ -52,3 +54,8 @@ This is a dynamically generated user's page, which reads from the users API to g
 - Casey
 - - [User Profile Page](https://cs326-finalupsilon.herokuapp.com/userPages/exampleUser/)
 - - Decent amount of Express server/API
+
+- Julia
+- - [Sign-in Page](https://cs326-finalupsilon.herokuapp.com/login/)
+- - [Sign-up Page](https://cs326-finalupsilon.herokuapp.com/register/)
+- - Sign in and create new user endpoints
