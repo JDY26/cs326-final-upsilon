@@ -44,7 +44,7 @@ async function makeCard(id){
     const card = document.createElement("div");
     card.classList.add("card", "col-3", "site-element");
     const img = document.createElement("img");
-    img.src = post["contentType"] === "audio" ? post["content"]["albumArt"] : post["contentType"]["imageUrl"];
+    img.src = json["contentType"] === "audio" ? json["content"]["albumArt"] : json["contentType"]["imageUrl"];
     img.classList.add("card-img-top", "center-img");
     card.appendChild(img);
     const cardTitle = document.createElement("h5");
