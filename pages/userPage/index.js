@@ -50,6 +50,14 @@ function generateMusicCard(albumURL, songURL, title, description){
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col">
+          <div class="btn-group float-end" role="group">
+            <button type="button" class="btn btn-warning float-end">Edit</button>
+            <button type="button" class="btn btn-danger float-end">Delete</button>
+          </div>
+        </div>
+      </div>
     </div>
 `
   return musicCard;
@@ -76,6 +84,14 @@ function generateArtCard(image, title, description){
                       <div class="card-body">
                         <ul class="list-group list-group-flush tagList">
                         </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="btn-group float-end" role="group">
+                        <button type="button" class="btn btn-warning float-end">Edit</button>
+                        <button type="button" class="btn btn-danger float-end">Delete</button>
                       </div>
                     </div>
                   </div>
