@@ -82,7 +82,9 @@ app.get('/posts/:id', function (req, res) {
     let tag2 = faker.lorem.word();
     let subtags1 = [faker.lorem.word(), faker.lorem.word()];
     let subtags2 = [faker.lorem.word()];
-    postdata['tags'] = {"l1tags":[tag1,tag2], tag1:subtags1, tag2:subtags2};
+    postdata['tags'] = {"l1tags":[tag1,tag2]};
+    postdata['tags'][tag1] = subtags1;
+    postdata['tags'][tag2] = subtags2;
     postdata['content'] = postdata['contentType'] === 'image' ? {"imageUrl": faker.image.city()} : {"albumArt": faker.image.nightlife(), "songUrl": faker.internet.url()};
     res.status(200);
     res.send(JSON.stringify(postdata));
