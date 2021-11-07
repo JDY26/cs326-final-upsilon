@@ -90,7 +90,8 @@ async function generatePosts(){
   let feedHtml = '';
   for(let i = 0; i < userData["posts"].length; i++){
     let postElem = document.createElement('li');
-    postElem.classList.add(['list-group-item','userFeed']);
+    postElem.classList.add('list-group-item');
+    postElem.classList.add('userFeed');
     let postHtml = '';
     //postHtml += '<li class="list-group-item userFeed">';
     let post = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${userData["posts"][i]}`)
