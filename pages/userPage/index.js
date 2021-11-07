@@ -85,7 +85,8 @@ function generateArtCard(image, title, description){
 }
 async function generatePosts(){
   let userId = window.location.pathname.split('/').slice(-2)[0];
-  let userData = await fetch(`https://cs326-finalupsilon.herokuapp.com/users/${userId}`);
+  let response = await fetch(`https://cs326-finalupsilon.herokuapp.com/users/${userId}`);
+  let userData = await response.json();
   let feedHtml = '';
   for(let i = 0; i < userData["posts"].length; i++){
     let postElem = document.createElement('li');
