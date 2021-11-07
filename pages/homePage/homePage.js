@@ -1,16 +1,20 @@
-document.getElementById("popular").addEventListener("click", () => {
-    const art = document.getElementById("card-wrapper");
-    const children = art.children;
-    const newCards = document.createDocumentFragment();
-    const arr = [1, 2, 0];
+const popular = document.getElementsByClassName("popular")
 
-    arr.forEach((index) => {
-        newCards.appendChild(children[index].cloneNode(true));
+for(button of popular){
+    button.addEventListener("click", () => {
+        const art = document.getElementById("card-wrapper");
+        const children = art.children;
+        const newCards = document.createDocumentFragment();
+        const arr = [1, 2, 0];
+    
+        arr.forEach((index) => {
+            newCards.appendChild(children[index].cloneNode(true));
+        });
+    
+        art.innerHTML = null;
+        art.appendChild(newCards);
     });
-
-    art.innerHTML = null;
-    art.appendChild(newCards);
-});
+}
 
 window.addEventListener("scroll", () => {
     const scrollTop = window.pageYOffset;
