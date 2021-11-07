@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 //const port = 80;
 const faker = require('faker');
+const bodyParser = require('body-parser')
+
 //https://github.com/Marak/Faker.js#readme
 //Links to pages
 
@@ -15,9 +17,11 @@ app.use('/userPages/exampleuser', express.static('pages/userPage/'));
 
 app.use('/login', express.static('pages/signinPage/'));
 
+// signupPage
+app.use('/register', express.static('pages/signupPage'));
 
 
-
+app.use(bodyParser.urlencoded({extended: false}))
 //---------------------
 //API Stuff 
 //User Endpoints
@@ -26,6 +30,17 @@ app.use('/login', express.static('pages/signinPage/'));
 app.post('/users/new', function (req, res) {
     res.status(201);
     res.send("User created");
+    res.redirect('/');
+});
+
+// login user
+app.post('/signin', (req, res) => {
+    res.status(200);
+    let username = req.body.floatingInput;
+    let password = req.body.floatingPassword;
+    let remember = req.body.checkbox; 
+    console.log(`username: ${username}, password: ${password}, remember-me: ${remember}`);
+    res.redirect('/');
 });
 
 //update user
@@ -97,6 +112,10 @@ app.post('/posts/:id/delete', function (req, res) {
     res.send("Post deleted");
 });
 
-app.listen(process.env.PORT, () => {
-    console.log(`app listening on port ${process.env.PORT}`);
-});
+// app.listen(process.env.PORT, () => {
+//     console.log(`app listening on port ${process.env.PORT}`);
+// });
+
+app.listen(port, () => {
+        console.log(`app listening on port ${port}`);
+    });
