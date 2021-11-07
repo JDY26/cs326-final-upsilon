@@ -106,6 +106,7 @@ async function generatePosts(){
       console.error("Contenty type is not audio or image");
     }
     postElem.innerHTML = postHtml;
+    generateTags(post['tags'], postElem);
     document.getElementById('userFeed').appendChild(postElem);
   };  
 }
