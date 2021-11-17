@@ -55,10 +55,9 @@ async function makeCard(id){
     cardSubtitle.classList.add("card-subtitle", "text-muted", "text-center");
     cardSubtitle.textContent = json["owner"];
     card.appendChild(cardSubtitle);
-    const timestamp = document.createElement("p");
-    timestamp.classList.add("card-subtitle", "text-muted", "small");
-    timestamp.textContent = json["timestamp"];
-    card.appendChild(timestamp);
+    const like = document.createElement("button");
+    like.classList.add("btn", "btn-outline-light", "btn-sm");
+    card.appendChild(like);
     row.appendChild(card);
 }
 
