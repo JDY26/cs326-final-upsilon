@@ -29,12 +29,11 @@
     margin-bottom: 1em;
 }
 
-.song-card{
-    width: 90%;
-    margin: auto;
-}
-
 .card{
     margin-left: 25px;
     margin-right: 25px;
+}
+
+#like-button{
+    width: 50%;
 }

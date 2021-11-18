@@ -51,12 +51,14 @@ async function makeCard(id){
     cardTitle.classList.add("card-title", "text-center", "display-6");
     cardTitle.textContent = json["name"];
     card.appendChild(cardTitle);
-    const cardSubtitle = document.createElement("h5");
-    cardSubtitle.classList.add("card-subtitle", "text-muted", "text-center");
+    const cardSubtitle = document.createElement("a");
+    cardSubtitle.classList.add("card-subtitle", "text-muted", "text-center", "card-link");
+    cardSubtitle.href = "https://cs326-finalupsilon.herokuapp.com/userPages/exampleuser";
     cardSubtitle.textContent = json["owner"];
     card.appendChild(cardSubtitle);
     const like = document.createElement("button");
-    like.classList.add("btn", "btn-outline-light", "btn-sm");
+    like.classList.add("btn", "btn-outline-light", "btn-sm", "like-button");
+    like.textContent = "Like";
     card.appendChild(like);
     row.appendChild(card);
 }
