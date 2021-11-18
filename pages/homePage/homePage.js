@@ -16,6 +16,11 @@ for(button of popular){
     });
 }*/
 
+document.getElementById("search").addEventListener("click", () => {
+    const searched = document.getElementById("searchField").value;
+    window.location.replace(`https://cs326-finalupsilon.herokuapp.com/userPages/${searched}`);
+});
+
 window.addEventListener("scroll", () => {
     const scrollTop = window.pageYOffset;
     const navbar = document.getElementsByClassName("navbar")[0];
