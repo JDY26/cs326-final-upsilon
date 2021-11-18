@@ -18,7 +18,7 @@ for(button of popular){
 
 document.getElementById("search").addEventListener("click", () => {
     const searched = document.getElementById("searchField").value;
-    window.location.replace(`https://cs326-finalupsilon.herokuapp.com/userPages/${searched}`);
+    window.location.href = `https://cs326-finalupsilon.herokuapp.com/userPages/${searched}`;
 });
 
 window.addEventListener("scroll", () => {
