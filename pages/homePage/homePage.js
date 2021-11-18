@@ -1,15 +1,24 @@
-document.getElementById("popular").addEventListener("click", () => {
-    const art = document.getElementById("card-wrapper");
-    const children = art.children;
-    const newCards = document.createDocumentFragment();
-    const arr = [1, 2, 0];
+/*const popular = document.getElementsByClassName("popular")
 
-    arr.forEach((index) => {
-        newCards.appendChild(children[index].cloneNode(true));
+for(button of popular){
+    button.addEventListener("click", () => {
+        const art = document.getElementById("card-wrapper");
+        const children = art.children;
+        const newCards = document.createDocumentFragment();
+        const arr = [1, 2, 0];
+    
+        arr.forEach((index) => {
+            newCards.appendChild(children[index].cloneNode(true));
+        });
+    
+        art.innerHTML = null;
+        art.appendChild(newCards);
     });
+}*/
 
-    art.innerHTML = null;
-    art.appendChild(newCards);
+document.getElementById("search").addEventListener("click", () => {
+    const searched = document.getElementById("searchField").value;
+    window.location.href = `https://cs326-finalupsilon.herokuapp.com/userPages/${searched}`;
 });
 
 window.addEventListener("scroll", () => {
@@ -40,21 +49,22 @@ async function makeCard(id){
     const card = document.createElement("div");
     card.classList.add("card", "col-3", "site-element");
     const img = document.createElement("img");
-    img.src = "download.jpg";
+    img.src = json["contentType"] === "audio" ? json["content"]["albumArt"] : json["content"]["imageUrl"];
     img.classList.add("card-img-top", "center-img");
     card.appendChild(img);
     const cardTitle = document.createElement("h5");
     cardTitle.classList.add("card-title", "text-center", "display-6");
     cardTitle.textContent = json["name"];
     card.appendChild(cardTitle);
-    const cardSubtitle = document.createElement("h5");
-    cardSubtitle.classList.add("card-subtitle", "text-muted", "text-center");
+    const cardSubtitle = document.createElement("a");
+    cardSubtitle.classList.add("card-subtitle", "text-muted", "text-center", "card-link");
+    cardSubtitle.href = "https://cs326-finalupsilon.herokuapp.com/userPages/exampleuser";
     cardSubtitle.textContent = json["owner"];
     card.appendChild(cardSubtitle);
-    const timestamp = document.createElement("p");
-    timestamp.classList.add("card-subtitle", "text-muted", "small");
-    timestamp.textContent = json["timestamp"];
-    card.appendChild(timestamp);
+    const like = document.createElement("button");
+    like.classList.add("btn", "btn-outline-light", "btn-sm", "like-button");
+    like.textContent = "Like";
+    card.appendChild(like);
     row.appendChild(card);
 }
 

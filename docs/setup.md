@@ -1,0 +1,2 @@
+## Build Instructions
+To start, first navigate to the root directory, cs326-final-upsilon. From there run the file server.js which will deliver the home page for the website. This can be done from the command line with the command: node server.js

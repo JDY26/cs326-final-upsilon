@@ -1,0 +1,40 @@
+Objects:
+    User Object
+        Profile Picture
+        Name
+        Biography
+        Array of (owned) Post Objects Unique IDs
+        Username
+        Unique ID (?)
+
+    Post Object
+        Type (song, image, etc)
+        Content (JSON, just image URL for image, but album art URL and audio file for song)
+        Name
+        Description
+        Tags (JSON)
+        Timestamp
+        Owner
+        Unique ID (?)
+
+API:
+    User:
+        Create: POST /users/new
+            Create user account
+        Update: POST /users/:id
+            Change picture, name, bio, or add a Post Object
+        Read:   GET /users/:id
+            Get all contents (to be rendered)
+        Delete: POST /users/:id/delete
+            Delete user account
+    
+    Post:
+        Create: POST /posts/new
+            Create new Post Object
+        Update: POST /posts/:id
+            Edit Name, Description, or Tags
+        Read:   GET /posts/:id
+            Get all contents and a link to img/video content in DB
+        Delete: POST /posts/:id/delete
+            Delete post
+
