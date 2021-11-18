@@ -22,6 +22,7 @@
   "homepage": "https://github.com/JDY26/cs326-final-upsilon#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "faker": "^5.5.3"
+    "faker": "^5.5.3",
+    "mongodb": "^4.2.0"
   }
 }
