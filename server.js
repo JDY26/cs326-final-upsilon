@@ -2,9 +2,25 @@ const express = require('express');
 const app = express();
 //const port = 80;
 const faker = require('faker');
-const bodyParser = require('body-parser')
-
 //https://github.com/Marak/Faker.js#readme
+const bodyParser = require('body-parser');
+const { MongoClient } = require('mongodb');
+
+let MONGODB_URI;
+
+//If there is no environment variable (heroku), then use the local one (dev testing)
+if(!process.env.MONGODB_URI){
+    let secrets = require('./secrets.json');
+    MONGODB_URI = secrets.MONGODB_URI;
+    console.log(MONGODB_URI);
+}
+else{
+    MONGODB_URI = process.env.MONGODB_URI;
+}
+
+const client = new MongoClient(MONGODB_URI);
+//client should be correct now, await client.connect() to connect to db, and then do client.db().whateverCommand() to interact with it. should probably do a client.close() somewhere too?
+
 //Links to pages
 
 //homePage
