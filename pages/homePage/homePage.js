@@ -64,8 +64,13 @@ async function makeCard(id){
     const like = document.createElement("button");
     like.classList.add("btn", "btn-outline-light", "btn-sm", "like-button");
     like.textContent = "Like";
+    like.addEventListener("click", likeUpdate);
     card.appendChild(like);
     row.appendChild(card);
+}
+
+async function likeUpdate(){
+    await fetch("https://cs326-finalupsilon.herokuapp.com/like");
 }
 
 makeCard("music").then();
