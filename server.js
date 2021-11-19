@@ -134,3 +134,49 @@ app.post('/posts/:id/delete', function (req, res) {
 app.listen(process.env.PORT, () => {
      console.log(`app listening on port ${process.env.PORT}`);
 });
+
+//--------------
+
+//Database CRUD operations
+
+//Retrieve a post from the database using the ID
+async function findPostByID(postID) {
+    try {
+        await client.connect();
+        const results = await client.db("upsilonTestDB").collection("posts").findOne({pid : postID});
+
+        await client.close();
+        return results;
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
+}
+
+//Retrieve a user from the database using the ID
+async function findUserByID(userID) {
+    try {
+        await client.connect();
+        const results = await client.db("upsilonTestDB").collection("users").findOne({uid : userID});
+
+        await client.close();
+        return results;
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
+}
+
+//Retrieve all posts from a certain user
+async function findUserPosts(userID) {
+    try {
+        await client.connect();
+        const results = await client.db("upsilonTestDB").collection("posts").find({uid : userID});
+
+        await client.close();
+        return results;
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
+}

@@ -1,0 +1,20 @@
+post document {
+    pid: Integer,
+    contentType: String,
+    name: String,
+    description: String,
+    timestamp: <Object>,
+    owner: String,
+    uid: Integer,
+    tags: <Object>,
+    content: Image/Audio
+}
+
+user document {
+    name: String,
+    picture: Image,
+    biography: String,
+    username: String,
+    uid: Integer,
+    yog: Integer
+}
