@@ -3,8 +3,12 @@ const app = express();
 //const port = 80;
 const faker = require('faker');
 //https://github.com/Marak/Faker.js#readme
+require('dotenv').config();
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
+const expressSession = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 let MONGODB_URI;
 
@@ -18,8 +22,24 @@ else{
     MONGODB_URI = process.env.MONGODB_URI;
 }
 
+//Session configuration
+//Still need to create Secret in heroku, also other session configurations
+
+const session = {
+    secret: process.env.Secret,
+    resave: false,
+    saveUninitialized: false
+};
+
 const client = new MongoClient(MONGODB_URI);
 //client should be correct now, await client.connect() to connect to db, and then do client.db().whateverCommand() to interact with it. should probably do a client.close() somewhere too?
+
+//Strategy
+const strategy = new LocalStrategy(
+    async (username, password, done) => {
+        
+    }
+);
 
 //Links to pages
 
@@ -47,6 +67,13 @@ app.post('/users/new', function (req, res) {
     res.status(201);
     let username = req.body.floatingInput;
     let password = req.body.floatingPassword;
+    const user = {}; //Not sure how to include password for user yet
+    user["name"] = "";
+    user["picture"] = "";
+    user["biography"] = "";
+    user["username"] = username;
+    user["uid"] = Math.floor(Math.random() * 1000000);
+    user["yog"] = 2022;
     console.log(`username: ${username}, password: ${password}`);
     res.send("User created");
     res.redirect('/');
