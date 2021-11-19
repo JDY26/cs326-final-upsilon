@@ -127,6 +127,7 @@ app.get('/posts/:id', function (req, res) {
 
 //delete post. need POST for auth ?
 app.post('/posts/:id/delete', function (req, res) {
+    removePost(req.params.id).then();
     res.status(200);
     res.send("Post deleted");
 });
@@ -143,10 +144,10 @@ app.listen(process.env.PORT, () => {
 async function findPostByID(postID) {
     try {
         await client.connect();
-        const results = await client.db("upsilonTestDB").collection("posts").findOne({pid : postID});
+        const result = await client.db("upsilonTestDB").collection("posts").findOne({pid : postID});
 
         await client.close();
-        return results;
+        return result;
     } catch (e) {
         console.log(e);
         return null;
@@ -157,10 +158,10 @@ async function findPostByID(postID) {
 async function findUserByID(userID) {
     try {
         await client.connect();
-        const results = await client.db("upsilonTestDB").collection("users").findOne({uid : userID});
+        const result = await client.db("upsilonTestDB").collection("users").findOne({uid : userID});
 
         await client.close();
-        return results;
+        return result;
     } catch (e) {
         console.log(e);
         return null;
@@ -178,5 +179,55 @@ async function findUserPosts(userID) {
     } catch (e) {
         console.log(e);
         return null;
+    }
+}
+
+//Delete a User Post
+async function removePost(postID) {
+    try {
+        await client.connect();
+        await client.db("upsilonTestDB").collection("posts").deleteOne({pid : postID});
+        await client.close();
+    } catch {
+        console.log(e);
+    }
+}
+
+//Update a User Post *Not Finsihed*
+async function updatePost(postID, updates) {
+    try {
+        await client.connect();
+        for(const update of updates) {
+            await client.db("upsilonTestDB").collection("posts").updateOne({pid : postID}, {
+                $set : {
+                    "":""
+                }
+            });
+        }
+        await client.close();
+    } catch {
+        console.log(e);
+    }
+}
+
+//Create a User
+async function createUser(userInfo) {
+    try {
+        await client.connect();
+        await client.db("upsilonTestDB").collection("users").insertOne(userInfo);
+        await client.close();
+    } catch {
+        console.log(e);
+    }
+}
+
+//Create a Post
+async function createPost(postInfo) {
+    try {
+        await client.connect();
+        await client.db("upsilonTestDB").collection("posts").insertOne(postInfo);
+        await client.close();
+    } catch {
+        console.log(e);
     }
 }
