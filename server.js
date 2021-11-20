@@ -50,7 +50,6 @@ app.use('/', express.static('pages/homePage/'));
 app.use('/userPages/exampleuser', express.static('pages/userPage/'));
 
 //signinPage
-
 app.use('/login', express.static('pages/signinPage/'));
 
 // signupPage
@@ -91,28 +90,36 @@ app.post('/signin', (req, res) => {
 
 //update user
 app.post('/users/:id', function (req, res) {
+    const body = req.body;
+    
     res.status(200);
     res.send("User updated");
 })
 
 //read user
 app.get('/users/:id', function (req, res) {
-    let userdata = {};
-    userdata['name'] = faker.name.findName();
-    userdata['picture'] = faker.internet.avatar();
-    userdata['biography'] = faker.lorem.sentence();
-    userdata['username'] = faker.internet.userName();
-    userdata['uid'] = req.params.id;
-    userdata['posts'] = [Math.floor(Math.random()*1000), Math.floor(Math.random()*1000), Math.floor(Math.random()*1000), Math.floor(Math.random()*1000)];
-    userdata['yog'] = Math.floor(Math.random() * 5)+2021;
-    res.status(200);
-    res.send(JSON.stringify(userdata));
+    //let userdata = {};
+    let findUserResponse = await findUserByID(req.params.id);
+    if(findUserResponse !== null){
+        res.status(200);
+        res.send(JSON.stringify(findUserResponse));
+    }
+    else{
+        res.status(404);
+        res.send();
+    }
 });
 
 //delete user. Uses POST for authentication (?)
 app.post('/users/:id/delete', function (req, res) {
-    res.status(200);
-    res.send("User deleted");
+    try{
+        await removeUser(req.params.id);
+        res.status(200);
+        res.send("User deleted");
+    } catch(e){//TODO: impl logic for checking auth, use this temporarily
+        res.status(401);//401: unauthorized
+        res.send();
+    }
 });
 
 //--------------------------------------------------------
@@ -214,6 +221,16 @@ async function removePost(postID) {
     try {
         await client.connect();
         await client.db("upsilonTestDB").collection("posts").deleteOne({pid : postID});
+        await client.close();
+    } catch {
+        console.log(e);
+    }
+}
+
+async function removeUser(userID) {
+    try {
+        await client.connect();
+        await client.db("upsilonTestDB").collection("posts").deleteOne({uid : userID});
         await client.close();
     } catch {
         console.log(e);
