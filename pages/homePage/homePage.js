@@ -41,15 +41,15 @@ window.addEventListener("scroll", () => {
 //Initially Sort By Popular
 //Store number of likes
 
-async function makeCard(id){
-    const response = await fetch("https://cs326-finalupsilon.herokuapp.com/posts/1");
+async function makeCard(id, pid){
+    const response = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${pid}`);
     const json = await response.json();
 
     const row = document.getElementById(id);
     const card = document.createElement("div");
     card.classList.add("card", "col-3", "site-element");
     const img = document.createElement("img");
-    img.src = json["contentType"] === "audio" ? json["content"]["albumArt"] : json["content"]["imageUrl"];
+    img.src = json["content"];
     img.classList.add("card-img-top", "center-img");
     card.appendChild(img);
     const cardTitle = document.createElement("h5");
@@ -73,9 +73,9 @@ async function likeUpdate(){
     await fetch("https://cs326-finalupsilon.herokuapp.com/like");
 }
 
-makeCard("music").then();
-makeCard("music").then();
-makeCard("music").then();
-makeCard("art").then();
-makeCard("art").then();
-makeCard("art").then();
+makeCard("music", "000001").then();
+makeCard("music", "000001").then();
+makeCard("music", "000001").then();
+makeCard("art", "000001").then();
+makeCard("art", "000001").then();
+makeCard("art", "000001").then();

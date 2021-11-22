@@ -56,7 +56,7 @@ app.use('/login', express.static('pages/signinPage/'));
 app.use('/register', express.static('pages/signupPage'));
 
 
-app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.urlencoded({extended: false}));
 //---------------------
 //API Stuff 
 //User Endpoints
@@ -97,7 +97,7 @@ app.post('/users/:id', function (req, res) {
 })
 
 //read user
-app.get('/users/:id', function (req, res) {
+app.get('/users/:id', async function (req, res) {
     //let userdata = {};
     let findUserResponse = await findUserByID(req.params.id);
     if(findUserResponse !== null){
@@ -111,7 +111,7 @@ app.get('/users/:id', function (req, res) {
 });
 
 //delete user. Uses POST for authentication (?)
-app.post('/users/:id/delete', function (req, res) {
+app.post('/users/:id/delete', async function (req, res) {
     try{
         await removeUser(req.params.id);
         res.status(200);
@@ -138,9 +138,9 @@ app.post('/posts/:id', function (req, res) {
 });
 
 //read post
-app.get('/posts/:id', function (req, res) {
-    let postdata = {};
-    const postTypes = ['image', 'audio']
+app.get('/posts/:id', async function (req, res) {
+    const postdata = await findPostByID(req.params.id);
+    /*const postTypes = ['image', 'audio']
     postdata['contentType'] = postTypes[Math.floor(Math.random()* 2)];//get a random postType
     postdata['name'] = faker.lorem.words();
     postdata['description'] = faker.lorem.sentences();
@@ -154,16 +154,26 @@ app.get('/posts/:id', function (req, res) {
     postdata['tags'] = {"l1tags":[tag1,tag2]};
     postdata['tags'][tag1] = subtags1;
     postdata['tags'][tag2] = subtags2;
-    postdata['content'] = postdata['contentType'] === 'image' ? {"imageUrl": faker.image.city()} : {"albumArt": faker.image.nightlife(), "songUrl": faker.internet.url()};
-    res.status(200);
-    res.send(JSON.stringify(postdata));
+    postdata['content'] = postdata['contentType'] === 'image' ? {"imageUrl": faker.image.city()} : {"albumArt": faker.image.nightlife(), "songUrl": faker.internet.url()};*/
+    if(postdata !== null){
+        res.status(200);
+        res.send(JSON.stringify(postdata));
+    } else {
+        res.status(404);
+        res.send();
+    }
 });
 
 //delete post. need POST for auth ?
-app.post('/posts/:id/delete', function (req, res) {
-    removePost(req.params.id).then();
-    res.status(200);
-    res.send("Post deleted");
+app.post('/posts/:id/delete', async function (req, res) {
+    try {
+        await removePost(req.params.id);
+        res.status(200);
+        res.send("Post deleted");
+    } catch(e) {
+        res.status(401);
+        res.send("Unable to delete");
+    }
 });
 
 app.listen(process.env.PORT, () => {
