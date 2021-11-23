@@ -61,16 +61,18 @@ async function makeCard(id, pid){
     cardSubtitle.href = "https://cs326-finalupsilon.herokuapp.com/userPages/exampleuser";
     cardSubtitle.textContent = json["owner"];
     card.appendChild(cardSubtitle);
+    const timestamp = document.createElement("p");
+    timestamp.classList.add("card-subtitle", "text-muted", "text-center");
+    timestamp.textContent = json["timestamp"];
+    card.appendChild
     const like = document.createElement("button");
     like.classList.add("btn", "btn-outline-light", "btn-sm", "like-button");
     like.textContent = "Like";
-    like.addEventListener("click", likeUpdate);
+    like.addEventListener("click", async () => {
+        await fetch(`https://cs326-finalupsilon.herokuapp.com/like/${pid}`);
+    });
     card.appendChild(like);
     row.appendChild(card);
-}
-
-async function likeUpdate(){
-    await fetch("https://cs326-finalupsilon.herokuapp.com/like");
 }
 
 makeCard("music", "000001").then();

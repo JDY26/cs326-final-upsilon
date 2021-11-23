@@ -176,6 +176,22 @@ app.post('/posts/:id/delete', async function (req, res) {
     }
 });
 
+//like post
+app.post('/like/:id', async function (req, res) {
+    try {
+        await client.connect();
+        await client.db("upsilonTestDB").collection("posts").updateOne({pid : req.params.id}, {
+            $inc : {
+                likes : 1
+            }
+        });
+        await client.close();
+    } catch(e) {
+        res.status(401);
+        res.send("Like failed");
+    }
+});
+
 app.listen(process.env.PORT, () => {
      console.log(`app listening on port ${process.env.PORT}`);
 });

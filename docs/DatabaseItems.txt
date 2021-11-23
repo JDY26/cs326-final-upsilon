@@ -1,11 +1,11 @@
 post document {
-    pid: Integer,
+    pid: String,
     contentType: String,
     name: String,
     description: String,
-    timestamp: <Object>,
+    timestamp: String,
     owner: String,
-    uid: Integer,
+    uid: String,
     tags: <Object>,
     content: Image/Audio,
     likes: Integer
@@ -13,9 +13,10 @@ post document {
 
 user document {
     name: String,
-    picture: Image,
+    picture: String,
     biography: String,
     username: String,
-    uid: Integer,
-    yog: Integer
+    posts: Array<String>
+    uid: String,
+    yog: String
 }
