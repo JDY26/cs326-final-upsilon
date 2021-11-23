@@ -47,7 +47,7 @@ const strategy = new LocalStrategy(
 app.use('/', express.static('pages/homePage/'));
 
 //userPage
-app.use('/userPages/exampleuser', express.static('pages/userPage/'));
+app.use('/userPages/:id', express.static('pages/userPage/'));
 
 //signinPage
 app.use('/login', express.static('pages/signinPage/'));
