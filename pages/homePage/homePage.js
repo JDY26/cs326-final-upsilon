@@ -63,8 +63,8 @@ async function makeCard(id, pid){
     card.appendChild(cardSubtitle);
     const timestamp = document.createElement("p");
     timestamp.classList.add("card-subtitle", "text-muted", "text-center");
-    timestamp.textContent = json["timestamp"];
-    card.appendChild
+    timestamp.textContent = json["timestamp"].split(" ")[1];
+    card.appendChild(timestamp);
     const like = document.createElement("button");
     like.classList.add("btn", "btn-outline-light", "btn-sm", "like-button");
     like.textContent = "Like";
