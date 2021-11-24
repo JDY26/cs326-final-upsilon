@@ -151,7 +151,7 @@ async function generatePosts(){
   };  
 }
 async function fillInHeader(){
-  let userId = window.location.pathname.split('/').slice(-2)[0];
+  let userId = window.location.pathname.split('/').slice(-2)[0];//TODO: Better way to fetch
   let response = await fetch(`https://cs326-finalupsilon.herokuapp.com/users/${userId}`);
   let userData = await response.json();
   let avatarDiv = document.getElementById('userAvatar');
@@ -254,10 +254,10 @@ document.getElementById('newPostSubmit').addEventListener('click', async functio
     postObj['content']['audioUrl'] = document.getElementById('newPostAudioUrl').value;
   }
   postObj['likes'] = 0;
-  postObj['owner'] = "user0";//TODO: dynamically assign owner
-  postObj['pid'] = "111111";//TODO: dynamically assign pid
+  const username = window.location.pathname.split('/').slice(-2)[0];//TODO: Use session cookie from auth stuff instead
+  postObj['owner'] = username;//TODO: dynamically assign owner in a better way
+  postObj['pid'] = "";//TODO: dynamically assign pid in server.js
   postObj['timestamp'] = Date.now();
-  console.log(postObj);
 
 });
 fillInHeader();
