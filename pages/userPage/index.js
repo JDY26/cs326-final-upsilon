@@ -194,7 +194,7 @@ document.getElementById('newPostTags').addEventListener('keypress', function(e){
     document.getElementById('newPostTags').value = '';
     const tagElem = document.createElement('li');
     tagElem.classList.add('list-group-item');
-    tagElem.value = tagName;
+    tagElem.innerText = tagName;
     document.getElementById('l1taglist').appendChild(tagElem);
     const div = document.createElement('div');
     div.classList.add('mb-3');
@@ -238,10 +238,10 @@ document.getElementById('newPostSubmit').addEventListener('click', async functio
   }
   postObj['description'] = document.getElementById('newPostDescription').value;
   postObj['tags'] = {'l1tags':[]};
-  document.getElementById('l1taglist').getElementsByTagName('li'), (function(tag){
+  Array.prototype.forEach.call(document.getElementById('l1taglist').getElementsByTagName('li'), (function(tag){
     postObj['tags']['l1tags'].push(tag.value);
     postObj['tags'][tag.value] = [];
-  });
+  }));
   postObj['tags']['l1tags'].forEach(function(tag){
     let subTagList = document.getElementById(`tagList-${tag}`);
     Array.prototype.forEach.call(subTagList.getElementsByTagName('li'), (function(subTag){
