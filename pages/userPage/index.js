@@ -259,6 +259,18 @@ document.getElementById('newPostSubmit').addEventListener('click', async functio
   postObj['pid'] = "";//TODO: dynamically assign pid in server.js
   postObj['timestamp'] = Date.now();
 
+  //POST postObj to /posts/new endpoint
+  const res = await fetch("https://cs326-finalupsilon.herokuapp.com/posts/new", {
+    method: "post",
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(postObj)
+  });
+  if(res.status !== 201){
+    window.alert(`create post server response: ${res.status} : ${res.body}`);
+  }
 });
 fillInHeader();
 generatePosts();
