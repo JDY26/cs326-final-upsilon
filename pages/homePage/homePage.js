@@ -49,7 +49,7 @@ async function makeCard(id, pid){
     const card = document.createElement("div");
     card.classList.add("card", "col-3", "site-element");
     const img = document.createElement("img");
-    img.src = json["content"];
+    img.src = json["content"]["imageUrl"];//modified to fit API Schema
     img.classList.add("card-img-top", "center-img");
     card.appendChild(img);
     const cardTitle = document.createElement("h5");
@@ -58,7 +58,7 @@ async function makeCard(id, pid){
     card.appendChild(cardTitle);
     const cardSubtitle = document.createElement("a");
     cardSubtitle.classList.add("card-subtitle", "text-muted", "text-center", "card-link");
-    cardSubtitle.href = "https://cs326-finalupsilon.herokuapp.com/userPages/exampleuser";
+    cardSubtitle.href = `https://cs326-finalupsilon.herokuapp.com/userPages/${json['owner']}`;
     cardSubtitle.textContent = json["owner"];
     card.appendChild(cardSubtitle);
     const timestamp = document.createElement("p");
