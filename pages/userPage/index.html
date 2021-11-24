@@ -13,6 +13,80 @@
   </head>
   <body>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <div class="modal fade" id="newPostForm" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel">Create Post</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <form id="newPostFormData">
+                    <div class="mb-3">
+                        <label for="newPostTitle">Title</label>
+                        <input type="text" class="form-control" id="newPostTitle" placeholder="Title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description">Description</label>
+                        <textarea type="text" class="form-control" id="newPostDescription" placeholder="Description" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="newPostContentType" id="newPostImageType" value="image" checked>
+                            <label class="form-check-label" for="newPostImageType">Image</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="newPostContentType" id="newPostAudioType" value="audio">
+                            <label class="form-check-label" for="newPostAudioType">Audio</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPostImageUrl">Art/Album Cover</label>
+                        <input type="text" class="form-control" id="newPostImageUrl" placeholder="Direct link to image" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPostAudioUrl">Audio URL</label>
+                        <input type="text" class="form-control" id="newPostAudioUrl" placeholder="Direct link to audio" required disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPostTags">Tags</label>
+                        <input type="text" class="form-control" id="newPostTags" placeholder="Example Tag">
+                    </div>
+                    <ul class="list-group" id="l1taglist">
+                    </ul>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="newPostSubmit">Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="navbar navbar-light bg-light fixed-top">
+        <div class="container-fluid collapse">
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="offcanvas offcanvas-end" id="offcanvasNavbar">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Test Menu</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="https://cs326-finalupsilon.herokuapp.com/login">Login/Sign-Up</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="searchField">
+                <button class="btn btn-outline-danger" type="submit" id="search">Search</button>
+                <button class="btn btn-outline-primary" type="button" id="newPost" data-bs-toggle="modal" data-bs-target="#newPostForm">Create Post</button>
+            </form>
+        </div>
+    </nav>
     <div class="container userHeader">
         <div class="row">
             <div class="col mx-auto text-center" id="userAvatar">

@@ -176,5 +176,88 @@ async function fillInHeader(){
   yog.innerText = `Class of ${userData['yog']}`;
   yogDiv.appendChild(yog);
 }
+//Modal event listeners
+document.getElementById('newPostForm').addEventListener('shown.bs.modal', function() {
+  document.getElementById('newPostTitle').focus();
+});
+document.getElementById('newPostImageType').addEventListener('click', function() {
+  document.getElementById('newPostAudioUrl').disabled = true;
+  document.getElementById('newPostImageUrl').required = false;
+});
+document.getElementById('newPostAudioType').addEventListener('click', function() {
+  document.getElementById('newPostAudioUrl').disabled = false;
+  document.getElementById('newPostImageUrl').required = true;
+});
+document.getElementById('newPostTags').addEventListener('keypress', function(e){//When pressing enter, add tag currently typed. Add field to add subtags with similar behavior
+  if(e.key === 'Enter'){
+    const tagName = document.getElementById('newPostTags').value;
+    document.getElementById('newPostTags').value = '';
+    const tagElem = document.createElement('li');
+    tagElem.classList.add('list-group-item');
+    tagElem.innerText = tagName;
+    document.getElementById('l1taglist').appendChild(tagElem);
+    const div = document.createElement('div');
+    div.classList.add('mb-3');
+    const label = document.createElement('label');
+    label.for = `tagEntry-${tagName}`;
+    label.innerText = `Subtags for ${tagName}`;
+    const subTagEntry = document.createElement('input');
+    const subTagList = document.createElement('ul');
+    subTagList.classList.add('list-group');
+    subTagList.classList.add('subtag');
+    //subTagList.classList.add('l1tags');
+    subTagEntry.classList.add('form-control');
+    subTagEntry.id = `tagEntry-${tagName}`;
+    subTagList.id = `tagList-${tagName}`;
+    div.appendChild(label);
+    div.appendChild(subTagList);
+    div.appendChild(subTagEntry);
+    document.getElementById('newPostFormData').appendChild(div);
+
+    subTagEntry.addEventListener('keypress', function(e2){//add subtags to tag list
+      if(e2.key === 'Enter'){
+        const subTagName = subTagEntry.value;
+        subTagEntry.value = '';
+        const subTag = document.createElement('li');
+        subTag.classList.add('list-group-item');
+        subTag.innerText = subTagName;
+        subTagList.appendChild(subTag);
+      }
+    });
+  }
+});
+//Submit new post form data to server
+document.getElementById('newPostSubmit').addEventListener('click', async function() {
+  let postObj = {};
+  postObj['name'] = document.getElementById('newPostTitle').value;
+  if(document.getElementById('newPostImageType').checked){
+    postObj['contentType'] = 'image';
+  }
+  else{
+    postObj['contentType'] = 'audio';
+  }
+  postObj['description'] = document.getElementById('newPostDescription').value;
+  postObj['tags'] = {'l1tags':[]};
+  Array.prototype.forEach.call(document.getElementById('l1taglist').getElementsByTagName('li'), (function(tag){
+    postObj['tags']['l1tags'].push(tag.value);
+    postObj['tags'][tag.value] = [];
+  }));
+  postObj['tags']['l1tags'].forEach(function(tag){
+    let subTagList = document.getElementById(`tagList-${tag}`);
+    Array.prototype.forEach.call(subTagList.getElementsByTagName('li'), (function(subTag){
+      postObj['tags'][tag].push(subTag.innerText);
+    }));
+  });
+  postObj['content'] = {'imageUrl': document.getElementById('newPostImageUrl').value};
+  if(postObj['contentType'] === 'audio'){
+    postObj['content']['audioUrl'] = document.getElementById('newPostAudioUrl').value;
+  }
+  postObj['likes'] = 0;
+  postObj['owner'] = "user0";//TODO: dynamically assign owner
+  postObj['pid'] = "111111";//TODO: dynamically assign pid
+  postObj['timestamp'] = Date.now();
+  console.log(postObj);
+
+});
 fillInHeader();
 generatePosts();
