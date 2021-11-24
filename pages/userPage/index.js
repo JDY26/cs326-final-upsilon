@@ -176,8 +176,17 @@ async function fillInHeader(){
   yog.innerText = `Class of ${userData['yog']}`;
   yogDiv.appendChild(yog);
 }
+//Modal event listeners
 document.getElementById('newPostForm').addEventListener('shown.bs.modal', function() {
   document.getElementById('newPostTitle').focus();
+});
+document.getElementById('newPostImageType').addEventListener('click', function() {
+  document.getElementById('newPostAudioUrl').disabled = true;
+  document.getElementById('newPostImageUrl').required = false;
+});
+document.getElementById('newPostAudioType').addEventListener('click', function() {
+  document.getElementById('newPostAudioUrl').disabled = false;
+  document.getElementById('newPostImageUrl').required = true;
 });
 fillInHeader();
 generatePosts();

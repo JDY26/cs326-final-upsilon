@@ -28,7 +28,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="description">Description</label>
-                        <input type="text" class="form-control" id="newPostDescription" placeholder="Description" required>
+                        <textarea type="text" class="form-control" id="newPostDescription" placeholder="Description" required></textarea>
                     </div>
                     <div class="mb-3">
                         <div class="form-check">
@@ -39,6 +39,14 @@
                             <input class="form-check-input" type="radio" name="newPostContentType" id="newPostAudioType" value="audio">
                             <label class="form-check-label" for="newPostAudioType">Audio</label>
                         </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPostImageUrl">Art/Album Cover</label>
+                        <input type="text" class="form-control" id="newPostImageUrl" placeholder="Direct link to image" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPostAudioUrl">Audio URL</label>
+                        <input type="text" class="form-control" id="newPostAudioUrl" placeholder="Direct link to audio" required disabled>
                     </div>
                 </form>
                 <div class="modal-footer">
