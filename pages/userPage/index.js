@@ -200,7 +200,9 @@ document.getElementById('newPostTags').addEventListener('keypress', function(e){
     const subTagEntry = document.createElement('input');
     const subTagList = document.createElement('ul');
     subTagList.classList.add('list-group');
+    subTagList.classList.add('subtag');
     subTagEntry.classList.add('form-control');
+    subTagEntry.classList.add('l1tags');
     subTagEntry.id = `tagEntry-${tagName}`;
     subTagList.id = `tagList-${tagName}`;
     div.appendChild(label);
@@ -208,7 +210,7 @@ document.getElementById('newPostTags').addEventListener('keypress', function(e){
     div.appendChild(subTagEntry);
     document.getElementById('newPostFormData').appendChild(div);
 
-    subTagEntry.addEventListener('keypress', function(e2){
+    subTagEntry.addEventListener('keypress', function(e2){//add subtags to tag list
       if(e2.key === 'Enter'){
         const subTagName = subTagEntry.value;
         subTagEntry.value = '';
@@ -219,6 +221,38 @@ document.getElementById('newPostTags').addEventListener('keypress', function(e){
       }
     });
   }
+});
+//Submit new post form data to server
+document.getElementById('newPostSubmit').addEventListener('click', async function() {
+  let postObj = {};
+  postObj['name'] = document.getElementById('newPostTitle').value;
+  if(document.getElementById('newPostImageType').checked){
+    postObj['contentType'] = 'image';
+  }
+  else{
+    postObj['contentType'] = 'audio';
+  }
+  postObj['description'] = document.getElementById('newPostDescription').value;
+  postObj['tags'] = {'l1tags':[]};
+  document.getElementsByClassName('l1tags').forEach(function(tag){
+    postObj['tags']['l1tags'].push(tag.value);
+    postObj['tags'][tag.value] = [];
+  });
+  postObj['tags']['l1tags'].forEach(function(tag){
+    let subTagList = document.getElementById(`tagList-${tag}`);
+    subTagList.getElementsByTagName('li').forEach(function(subTag){
+      postObj['tags'][tag].push(subTag.innerText);
+    });
+  });
+  postObj['content'] = {'imageUrl': document.getElementById('newPostImageUrl').value};
+  if(postObj['contentType'] === 'audio'){
+    postObj['content']['audioUrl'] = document.getElementById('newPostAudioUrl').value;
+  }
+  postObj['likes'] = 0;
+  postObj['owner'] = "user0";//TODO: dynamically assign owner
+  postObj['pid'] = "111111";//TODO: dynamically assign pid
+  postObj['timestamp'] = Date.now();
+
 });
 fillInHeader();
 generatePosts();
