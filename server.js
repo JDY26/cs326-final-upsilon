@@ -92,7 +92,7 @@ app.post('/signin', (req, res) => {
 });
 
 //update user
-app.post('/users/:id', function (req, res) {
+app.post('/users/:username', function (req, res) {
     const body = req.body;
     
     res.status(200);
@@ -100,9 +100,8 @@ app.post('/users/:id', function (req, res) {
 })
 
 //read user
-app.get('/users/:id', async function (req, res) {
-    //let userdata = {};
-    let findUserResponse = await findUserByID(req.params.id);
+app.get('/users/:username', async function (req, res) {
+    let findUserResponse = await findUserByUsername(req.params.username);
     if(findUserResponse !== null){
         res.status(200);
         res.send(JSON.stringify(findUserResponse));
@@ -114,9 +113,9 @@ app.get('/users/:id', async function (req, res) {
 });
 
 //delete user. Uses POST for authentication (?)
-app.post('/users/:id/delete', async function (req, res) {
+app.post('/users/:username/delete', async function (req, res) {
     try{
-        await removeUser(req.params.id);
+        await removeUser(req.params.username);
         res.status(200);
         res.send("User deleted");
     } catch(e){//TODO: impl logic for checking auth, use this temporarily
@@ -222,6 +221,20 @@ async function findUserByID(userID) {
     try {
         await client.connect();
         const result = await client.db().collection("users").findOne({uid : userID});
+
+        await client.close();
+        return result;
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
+}
+
+//Retrieve a user from the database using the username
+async function findUserByUsername(username) {
+    try {
+        await client.connect();
+        const result = await client.db().collection("users").findOne({username : username});
 
         await client.close();
         return result;
