@@ -160,7 +160,7 @@ async function fillInHeader(){
   let yogDiv = document.getElementById('yog');
   
   let avatar = document.createElement('img');
-  avatar.src = userData['picture'];
+  avatar.src = userData['profile_picture'];
   avatar.classList.add('rounded-circle');
   avatarDiv.appendChild(avatar);
 
