@@ -58,7 +58,7 @@ async function makeCard(id, pid){
     card.appendChild(cardTitle);
     const cardSubtitle = document.createElement("a");
     cardSubtitle.classList.add("card-subtitle", "text-muted", "text-center", "card-link");
-    cardSubtitle.href = "https://cs326-finalupsilon.herokuapp.com/userPages/exampleuser";
+    cardSubtitle.href = `https://cs326-finalupsilon.herokuapp.com/userPages/${json[owner]}`;
     cardSubtitle.textContent = json["owner"];
     card.appendChild(cardSubtitle);
     const timestamp = document.createElement("p");
