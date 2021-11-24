@@ -252,6 +252,7 @@ document.getElementById('newPostSubmit').addEventListener('click', async functio
   postObj['owner'] = "user0";//TODO: dynamically assign owner
   postObj['pid'] = "111111";//TODO: dynamically assign pid
   postObj['timestamp'] = Date.now();
+  console.log(postObj);
 
 });
 fillInHeader();
