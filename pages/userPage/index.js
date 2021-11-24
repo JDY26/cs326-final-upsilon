@@ -201,8 +201,8 @@ document.getElementById('newPostTags').addEventListener('keypress', function(e){
     const subTagList = document.createElement('ul');
     subTagList.classList.add('list-group');
     subTagList.classList.add('subtag');
+    subTagList.classList.add('l1tags');
     subTagEntry.classList.add('form-control');
-    subTagEntry.classList.add('l1tags');
     subTagEntry.id = `tagEntry-${tagName}`;
     subTagList.id = `tagList-${tagName}`;
     div.appendChild(label);
