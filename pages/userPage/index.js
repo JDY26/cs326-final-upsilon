@@ -234,15 +234,15 @@ document.getElementById('newPostSubmit').addEventListener('click', async functio
   }
   postObj['description'] = document.getElementById('newPostDescription').value;
   postObj['tags'] = {'l1tags':[]};
-  document.getElementsByClassName('l1tags').forEach(function(tag){
+  Array.prototype.forEach.call(document.getElementsByClassName('l1tags'), (function(tag){
     postObj['tags']['l1tags'].push(tag.value);
     postObj['tags'][tag.value] = [];
-  });
+  }));
   postObj['tags']['l1tags'].forEach(function(tag){
     let subTagList = document.getElementById(`tagList-${tag}`);
-    subTagList.getElementsByTagName('li').forEach(function(subTag){
+    Array.prototype.forEach.call(subTagList.getElementsByTagName('li'), (function(subTag){
       postObj['tags'][tag].push(subTag.innerText);
-    });
+    }));
   });
   postObj['content'] = {'imageUrl': document.getElementById('newPostImageUrl').value};
   if(postObj['contentType'] === 'audio'){
