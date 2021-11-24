@@ -49,7 +49,7 @@ async function makeCard(id, pid){
     const card = document.createElement("div");
     card.classList.add("card", "col-3", "site-element");
     const img = document.createElement("img");
-    img.src = json["content"];
+    img.src = json["content"]["imageUrl"];//modified to fit API Schema
     img.classList.add("card-img-top", "center-img");
     card.appendChild(img);
     const cardTitle = document.createElement("h5");
