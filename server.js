@@ -10,6 +10,8 @@ const expressSession = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
+const DB_NAME = process.env.DB_NAME || "upsilonTestDB";//Specify which DB to use
+
 let MONGODB_URI;
 
 //If there is no environment variable (heroku), then use the local one (dev testing)
@@ -19,8 +21,9 @@ if(!process.env.MONGODB_URI){
     console.log(MONGODB_URI);
 }
 else{
-    MONGODB_URI = process.env.MONGODB_URI;
+    MONGODB_URI = process.env.MONGODB_URI + `/${DB_NAME}?retryWrites=true&w=majority`;
 }
+
 
 //Session configuration
 //Still need to create Secret in heroku, also other session configurations
