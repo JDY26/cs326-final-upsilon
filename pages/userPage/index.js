@@ -239,10 +239,11 @@ document.getElementById('newPostSubmit').addEventListener('click', async functio
   postObj['description'] = document.getElementById('newPostDescription').value;
   postObj['tags'] = {'l1tags':[]};
   Array.prototype.forEach.call(document.getElementById('l1taglist').getElementsByTagName('li'), (function(tag){
-    postObj['tags']['l1tags'].push(tag.value);
-    postObj['tags'][tag.value] = [];
+    postObj['tags']['l1tags'].push(tag.innerText);
+    postObj['tags'][tag.innerText] = [];
   }));
   postObj['tags']['l1tags'].forEach(function(tag){
+    console.log(`looking at l1tag tagList-${tag}`);
     let subTagList = document.getElementById(`tagList-${tag}`);
     Array.prototype.forEach.call(subTagList.getElementsByTagName('li'), (function(subTag){
       postObj['tags'][tag].push(subTag.innerText);
