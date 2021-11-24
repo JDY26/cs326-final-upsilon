@@ -176,5 +176,8 @@ async function fillInHeader(){
   yog.innerText = `Class of ${userData['yog']}`;
   yogDiv.appendChild(yog);
 }
+document.getElementById('newPostForm').addEventListener('shown.bs.modal', function() {
+  document.getElementById('newPostTitle').focus();
+});
 fillInHeader();
 generatePosts();
