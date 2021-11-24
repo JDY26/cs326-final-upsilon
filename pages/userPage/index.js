@@ -191,6 +191,7 @@ document.getElementById('newPostAudioType').addEventListener('click', function()
 document.getElementById('newPostTags').addEventListener('keypress', function(e){//When pressing enter, add tag currently typed. Add field to add subtags with similar behavior
   if(e.key === 'Enter'){
     const tagName = document.getElementById('newPostTags').value;
+    document.getElementById('newPostTags').value = '';
     const div = document.createElement('div');
     div.classList.add('mb-3');
     const label = document.createElement('label');
@@ -201,6 +202,7 @@ document.getElementById('newPostTags').addEventListener('keypress', function(e){
     subTagList.classList.add('list-group');
     subTagEntry.classList.add('form-control');
     subTagEntry.id = `tagEntry-${tagName}`;
+    subTagList.id = `tagList-${tagName}`;
     div.appendChild(label);
     div.appendChild(subTagList);
     div.appendChild(subTagEntry);
@@ -209,10 +211,11 @@ document.getElementById('newPostTags').addEventListener('keypress', function(e){
     subTagEntry.addEventListener('keypress', function(e2){
       if(e2.key === 'Enter'){
         const subTagName = subTagEntry.value;
+        subTagEntry.value = '';
         const subTag = document.createElement('li');
         subTag.classList.add('list-group-item');
         subTag.innerText = subTagName;
-        div.appendChild(subTag);
+        subTagList.appendChild(subTag);
       }
     });
   }
