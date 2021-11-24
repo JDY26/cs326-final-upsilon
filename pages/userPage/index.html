@@ -21,7 +21,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
-                <form>
+                <form id="newPostFormData">
                     <div class="mb-3">
                         <label for="newPostTitle">Title</label>
                         <input type="text" class="form-control" id="newPostTitle" placeholder="Title" required>
@@ -47,6 +47,10 @@
                     <div class="mb-3">
                         <label for="newPostAudioUrl">Audio URL</label>
                         <input type="text" class="form-control" id="newPostAudioUrl" placeholder="Direct link to audio" required disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPostTags">Tags</label>
+                        <input type="text" class="form-control" id="newPostTags" placeholder="Example Tag">
                     </div>
                 </form>
                 <div class="modal-footer">
