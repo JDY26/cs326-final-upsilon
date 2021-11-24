@@ -180,7 +180,7 @@ app.post('/posts/:id/delete', async function (req, res) {
 app.post('/like/:id', async function (req, res) {
     try {
         await client.connect();
-        await client.db("upsilonTestDB").collection("posts").updateOne({pid : req.params.id}, {
+        await client.db().collection("posts").updateOne({pid : req.params.id}, {
             $inc : {
                 likes : 1
             }
@@ -204,7 +204,7 @@ app.listen(process.env.PORT, () => {
 async function findPostByID(postID) {
     try {
         await client.connect();
-        const result = await client.db("upsilonTestDB").collection("posts").findOne({pid : postID});
+        const result = await client.db().collection("posts").findOne({pid : postID});
 
         await client.close();
         return result;
@@ -218,7 +218,7 @@ async function findPostByID(postID) {
 async function findUserByID(userID) {
     try {
         await client.connect();
-        const result = await client.db("upsilonTestDB").collection("users").findOne({uid : userID});
+        const result = await client.db().collection("users").findOne({uid : userID});
 
         await client.close();
         return result;
@@ -232,7 +232,7 @@ async function findUserByID(userID) {
 async function findUserPosts(userID) {
     try {
         await client.connect();
-        const results = await client.db("upsilonTestDB").collection("posts").find({uid : userID});
+        const results = await client.db().collection("posts").find({uid : userID});
 
         await client.close();
         return results;
@@ -246,7 +246,7 @@ async function findUserPosts(userID) {
 async function removePost(postID) {
     try {
         await client.connect();
-        await client.db("upsilonTestDB").collection("posts").deleteOne({pid : postID});
+        await client.db().collection("posts").deleteOne({pid : postID});
         await client.close();
     } catch {
         console.log(e);
@@ -256,7 +256,7 @@ async function removePost(postID) {
 async function removeUser(userID) {
     try {
         await client.connect();
-        await client.db("upsilonTestDB").collection("posts").deleteOne({uid : userID});
+        await client.db().collection("posts").deleteOne({uid : userID});
         await client.close();
     } catch {
         console.log(e);
@@ -268,7 +268,7 @@ async function updatePost(postID, updates) {
     try {
         await client.connect();
         for(const update of updates) {
-            await client.db("upsilonTestDB").collection("posts").updateOne({pid : postID}, {
+            await client.db().collection("posts").updateOne({pid : postID}, {
                 $set : {
                     "":""
                 }
@@ -284,7 +284,7 @@ async function updatePost(postID, updates) {
 async function createUser(userInfo) {
     try {
         await client.connect();
-        await client.db("upsilonTestDB").collection("users").insertOne(userInfo);
+        await client.db().collection("users").insertOne(userInfo);
         await client.close();
     } catch {
         console.log(e);
@@ -295,7 +295,7 @@ async function createUser(userInfo) {
 async function createPost(postInfo) {
     try {
         await client.connect();
-        await client.db("upsilonTestDB").collection("posts").insertOne(postInfo);
+        await client.db().collection("posts").insertOne(postInfo);
         await client.close();
     } catch {
         console.log(e);
