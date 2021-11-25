@@ -1,11 +1,10 @@
 Objects:
     User Object
-        Profile Picture
-        Name
-        Biography
-        Array of (owned) Post Objects Unique IDs
-        Username
-        Unique ID (?)
+        profile_picture (direct url to profile picture)
+        name
+        biography
+        posts (Array of (owned) Post Objects Unique IDs)
+        username (this is the unique identifier)
 
     Post Object
         Type (song, image, etc)
