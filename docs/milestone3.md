@@ -1,4 +1,4 @@
-#Database Document Descriptions:
+# Database Document Descriptions:
 post document {
     pid: String,
     contentType: String,
@@ -18,11 +18,23 @@ user document {
     biography: String,
     username: String,
     posts: Array<String>
-    uid: String,
     yog: String
 }
 
-#Division of Labor
-Casey:
+## [Link to website](http://https://cs326-finalupsilon.herokuapp.com/ "Link to website")
+# Division of Labor
+### Casey:
+- Dynamically generate user page according to database data
+- Dynamically route and generate a user's page
+- add functionality to create new post
+ - Frontend and backend
+  - Modal form with nice UI and dynamic elements
+  - Post-tagging with 2 'levels' of tags
+- Some MongoDB client code
+- Heroku Environment Variables
+- Refactoring MongoDB client code
+  - Reduced outgoing connections causing slowdown & rate limiting
+- Bugfixing on Edit User Feature
+- Project Planning (Issues & Feature Tracking)
 James:
 Julia:
