@@ -104,7 +104,7 @@ app.post('/usersUpdate/:username', async function (req, res) {
         res.status(200);
         res.send("User updated");
     } catch(e){
-        res.status(401);
+        res.status(500);
         res.send();
     }
 })
@@ -284,14 +284,15 @@ async function removeUser(userID) {
 async function updateUser(userID, userUpdate){
     const updatedUser = JSON.parse(userUpdate);
     try {
-        for(const entry in updatedUser){
-            await client.db().collection("users").updateOne({uid : userID}, {
-                $set : {
-                    entry : updatedUser[entry]
-                }
-            });
-        }
-    } catch {
+        await client.db().collection("users").updateOne({uid : userID}, {
+            $set : {
+                "name" : updatedUser["name"],
+                "biography" : updatedUser["biography"],
+                "profile_picture" : updatedUser["profile_picture"],
+                "yog" : updatedUser["yog"]
+            }
+        });
+    } catch(e) {
         console.log(e);
     }
 }
