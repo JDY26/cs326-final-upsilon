@@ -75,9 +75,9 @@ async function makeCard(id, pid){
     row.appendChild(card);
 }
 
-makeCard("music", "000001").then();
-makeCard("music", "000001").then();
-makeCard("music", "000001").then();
-makeCard("art", "000001").then();
-makeCard("art", "000001").then();
-makeCard("art", "000001").then();
+makeCard("music", "745f27d5c01b30b8f89fbfc9e7f102e445ce48df").then();
+makeCard("music", "745f27d5c01b30b8f89fbfc9e7f102e445ce48df").then();
+makeCard("music", "745f27d5c01b30b8f89fbfc9e7f102e445ce48df").then();
+makeCard("art", "745f27d5c01b30b8f89fbfc9e7f102e445ce48df").then();
+makeCard("art", "745f27d5c01b30b8f89fbfc9e7f102e445ce48df").then();
+makeCard("art", "745f27d5c01b30b8f89fbfc9e7f102e445ce48df").then();
