@@ -65,20 +65,26 @@ app.use(bodyParser.urlencoded({extended: false}));
 //User Endpoints
 
 //create user
-app.post('/users/new', function (req, res) {
-    res.status(201);
+app.post('/users/new', async function (req, res) {
     let username = req.body.floatingInput;
     let password = req.body.floatingPassword;
-    const user = {}; //Not sure how to include password for user yet
+    const user = {}; // Not sure how to include password for user yet
     user["name"] = "";
-    user["picture"] = "";
+    user["picture"] = ""; 
     user["biography"] = "";
     user["username"] = username;
     user["uid"] = Math.floor(Math.random() * 1000000);
     user["yog"] = 2022;
-    console.log(`username: ${username}, password: ${password}`);
-    res.send("User created");
-    res.redirect('/');
+    
+    try {
+        await createUser(user);
+        res.status(201);
+        res.redirect('/');
+        res.send("User created");
+    } catch(e) { //TODO: impl logic for checking auth, use this temporarily
+        res.status(401); //401: unauthorized
+        res.send();
+    }
 });
 
 // login user
@@ -194,9 +200,10 @@ app.post('/like/:id', async function (req, res) {
     }
 });
 
-app.listen(process.env.PORT, () => {
+app.listen(8080);
+/*app.listen(process.env.PORT, () => {
      console.log(`app listening on port ${process.env.PORT}`);
-});
+});*/
 
 //--------------
 
