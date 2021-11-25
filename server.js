@@ -48,14 +48,14 @@ const strategy = new LocalStrategy(
 	if (findUserByUsername(username) === null) {
 	    return done(null, false, { 'message' : 'Wrong username' });
 	}
-	if (!validatePassword(username, password)) {
+	if (validatePassword(username, password) === false) {
 	    return done(null, false, { 'message' : 'Wrong password' });
 	}
 	return done(null, username);
     });
 
 app.use(expressSession(session));
-passport.use(strategy);
+//passport.use(strategy);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -126,16 +126,16 @@ app.post('/users/new', async function (req, res) {
 });
 
 // login user
-app.post('/signin', (req, res) => {
+app.post('/signin', async (req, res) => {
     res.status(200);
     res.status(200);
     let username = req.body.username;
     let password = req.body.password;
     let remember = req.body.checkbox; 
     console.log(`username: ${username}, password: ${password}, remember-me: ${remember}`);
-    passport.authenticate('local' , {     // use username/password authentication
-        'successRedirect' : '/',   // when we login, go to /private 
-        'failureRedirect' : '/login'      // otherwise, back to login
+    passport.authenticate('local' , {     
+        'successRedirect' : '/',   
+        'failureRedirect' : '/login'
     });
 });
 
@@ -369,7 +369,8 @@ async function storeLogin(loginInfo) {
 
 async function getHash(username) {
     try {
-        const result = await client.db().collection("Logins").findOne({username : username});
+        const cursor = await client.db().collection("Logins").findOne({username : username});
+        const result = cursor.password;
         return result;
     } catch (e) {
         console.log(e);
@@ -377,15 +378,16 @@ async function getHash(username) {
     }
 }
 
-function validatePassword(username, password) {
+async function validatePassword(username, password) {
     if (!findUserByUsername(username)) {
         return false;
     }
-    const hash = getHash(username);
-    bcrypt.compare(password, hash, function(err, isMatch) {
+    
+    const hash = await getHash(username);
+    bcrypt.compare(password, hash, function(err, res) {
         if (err) {
             console.log(err);
-        } else if (!isMatch) {
+        } else if (!res) {
             return false;
         } else {
             return true;
