@@ -98,9 +98,9 @@ app.post('/signin', (req, res) => {
 
 //update user
 app.post('/usersUpdate/:username', async function (req, res) {
-    const updateUser = req.body;
+    const updatedUser = req.body;
     try {
-        await updateUser(req.params.username, updateUser);
+        await updateUser(req.params.username, updatedUser);
         res.status(200);
         res.send("User updated");
     } catch(e){
@@ -280,12 +280,14 @@ async function removeUser(userID) {
     }
 }
 
+//Update a user profile
 async function updateUser(userID, userUpdate){
+    const updatedUser = JSON.parse(userUpdate);
     try {
-        for(const entry in userUpdate){
-            await client.db().collection("users").updateOne({username : userID}, {
+        for(const entry in updatedUser){
+            await client.db().collection("users").updateOne({uid : userID}, {
                 $set : {
-                    entry : userUpdate[entry]
+                    entry : updatedUser[entry]
                 }
             });
         }
