@@ -36,6 +36,9 @@ const session = {
 };
 
 const client = new MongoClient(MONGODB_URI);
+(async function() {
+    await client.connect();
+})();
 //client should be correct now, await client.connect() to connect to db, and then do client.db().whateverCommand() to interact with it. should probably do a client.close() somewhere too?
 
 //Strategy
@@ -148,13 +151,11 @@ app.post('/posts/new', async function (req, res) {
     }
 
     try{
-        await client.connect();
         await client.db().collection('users').updateOne({username:postObj['owner']}, {
             $push : {
                 posts: hashed
             }
         });
-        await client.close();
     } catch(e){
         res.status(500);
         res.send("Error inserting post to user")
@@ -209,13 +210,11 @@ app.post('/posts/:id/delete', async function (req, res) {
 //like post
 app.post('/like/:id', async function (req, res) {
     try {
-        await client.connect();
         await client.db().collection("posts").updateOne({pid : req.params.id}, {
             $inc : {
                 likes : 1
             }
         });
-        await client.close();
     } catch(e) {
         res.status(401);
         res.send("Like failed");
@@ -233,10 +232,7 @@ app.listen(process.env.PORT, () => {
 //Retrieve a post from the database using the ID
 async function findPostByID(postID) {
     try {
-        await client.connect();
         const result = await client.db().collection("posts").findOne({pid : postID});
-
-        await client.close();
         return result;
     } catch (e) {
         console.log(e);
@@ -247,10 +243,7 @@ async function findPostByID(postID) {
 //Retrieve a user from the database using the ID
 async function findUserByID(userID) {
     try {
-        await client.connect();
         const result = await client.db().collection("users").findOne({uid : userID});
-
-        await client.close();
         return result;
     } catch (e) {
         console.log(e);
@@ -261,9 +254,7 @@ async function findUserByID(userID) {
 //Retrieve a user from the database using the username
 async function findUserByUsername(username) {
     try {
-        await client.connect();
         const result = await client.db().collection("users").findOne({username : username});
-        await client.close();
         return result;
     } catch (e) {
         console.log(e);
@@ -274,10 +265,7 @@ async function findUserByUsername(username) {
 //Retrieve all posts from a certain user
 async function findUserPosts(userID) {
     try {
-        await client.connect();
         const results = await client.db().collection("posts").find({uid : userID});
-
-        await client.close();
         return results;
     } catch (e) {
         console.log(e);
@@ -288,9 +276,7 @@ async function findUserPosts(userID) {
 //Delete a User Post
 async function removePost(postID) {
     try {
-        await client.connect();
         await client.db().collection("posts").deleteOne({pid : postID});
-        await client.close();
     } catch {
         console.log(e);
     }
@@ -298,9 +284,7 @@ async function removePost(postID) {
 
 async function removeUser(userID) {
     try {
-        await client.connect();
         await client.db().collection("posts").deleteOne({uid : userID});
-        await client.close();
     } catch {
         console.log(e);
     }
@@ -309,15 +293,16 @@ async function removeUser(userID) {
 //Update a User Post *Not Finsihed*
 async function updatePost(postID, updates) {
     try {
-        await client.connect();
+        let results = [];//Array of all results
         for(const update of updates) {
-            await client.db().collection("posts").updateOne({pid : postID}, {
+            const res = await client.db().collection("posts").updateOne({pid : postID}, {
                 $set : {
                     "":""
                 }
             });
+            results.push(res);//add each result to array
         }
-        await client.close();
+        return results;//return array of results? maybe just return if all (promise.all) were successful?
     } catch {
         console.log(e);
     }
@@ -326,9 +311,8 @@ async function updatePost(postID, updates) {
 //Create a User
 async function createUser(userInfo) {
     try {
-        await client.connect();
-        await client.db().collection("users").insertOne(userInfo);
-        await client.close();
+        const result = await client.db().collection("users").insertOne(userInfo);
+        return result;
     } catch {
         console.log(e);
     }
@@ -337,10 +321,17 @@ async function createUser(userInfo) {
 //Create a Post
 async function createPost(postInfo) {
     try {
-        await client.connect();
-        await client.db().collection("posts").insertOne(postInfo);
-        await client.close();
+        const result = await client.db().collection("posts").insertOne(postInfo);
+        return result;
     } catch {
         console.log(e);
     }
 }
+
+// When the process closes, close the mongodb connection.
+async function cleanup(){
+    await client.close();
+    process.exit();
+}
+process.on('SIGINT', cleanup);
+process.on('SIGTERM', cleanup);
