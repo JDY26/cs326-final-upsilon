@@ -263,7 +263,6 @@ async function findUserByUsername(username) {
     try {
         await client.connect();
         const result = await client.db().collection("users").findOne({username : username});
-
         await client.close();
         return result;
     } catch (e) {

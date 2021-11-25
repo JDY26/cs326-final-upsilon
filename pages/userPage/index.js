@@ -243,7 +243,6 @@ document.getElementById('newPostSubmit').addEventListener('click', async functio
     postObj['tags'][tag.innerText] = [];
   }));
   postObj['tags']['l1tags'].forEach(function(tag){
-    console.log(`looking at l1tag tagList-${tag}`);
     let subTagList = document.getElementById(`tagList-${tag}`);
     Array.prototype.forEach.call(subTagList.getElementsByTagName('li'), (function(subTag){
       postObj['tags'][tag].push(subTag.innerText);
