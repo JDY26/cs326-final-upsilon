@@ -104,7 +104,7 @@ app.post('/usersUpdate/:username', async function (req, res) {
         res.status(200);
         res.send("User updated");
     } catch(e){
-        res.status(401);
+        res.status(500);
         res.send();
     }
 })
