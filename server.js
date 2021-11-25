@@ -100,7 +100,7 @@ app.post('/signin', (req, res) => {
 app.post('/usersUpdate/:username', async function (req, res) {
     const updatedUser = req.body;
     try {
-        const dbReq = await updateUser(req.params.username, updatedUser);
+        const dbReq = await updateUser(req.params.username, JSON.stringify(updatedUser));
         res.status(200);
         res.send("User updated");
     } catch(e){
