@@ -280,10 +280,10 @@ document.getElementById('editUserForm').addEventListener('shown.bs.modal', funct
 //Post New User Data
 document.getElementById("editUserSubmit").addEventListener("click", async ()=> {
   const userObj = {};
-  userObj["name"] = document.getElementById("newProfileName");
-  userObj["biography"] = document.getElementById("newBiography");
-  userObj["profile_picture"] = document.getElementById("newProfilePicture");
-  userObj["yog"] = document.getElementById("newYoG");
+  userObj["name"] = document.getElementById("newProfileName").value;
+  userObj["biography"] = document.getElementById("newBiography").value;
+  userObj["profile_picture"] = document.getElementById("newProfilePicture").value;
+  userObj["yog"] = document.getElementById("newYoG").value;
 
   const res = await fetch(`https://cs326-finalupsilon.herokuapp.com/usersUpdate/${window.location.pathname.split('/').slice(-2)[0]}`, {
     method : "POST",
