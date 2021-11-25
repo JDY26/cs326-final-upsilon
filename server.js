@@ -44,10 +44,6 @@ const client = new MongoClient(MONGODB_URI);
 
 //Strategy
 const strategy = new LocalStrategy(
-    {
-        usernameField: 'floatingInput',
-        passwordField: 'floatingPassword'
-    },
     function(username, password, done) {
 	if (findUserByUsername(username) === null) {
 	    return done(null, false, { 'message' : 'Wrong username' });
@@ -133,15 +129,14 @@ app.post('/users/new', async function (req, res) {
 app.post('/signin', (req, res) => {
     res.status(200);
     res.status(200);
-    let username = req.body.floatingInput;
-    let password = req.body.floatingPassword;
+    let username = req.body.username;
+    let password = req.body.password;
     let remember = req.body.checkbox; 
     console.log(`username: ${username}, password: ${password}, remember-me: ${remember}`);
     passport.authenticate('local' , {     // use username/password authentication
         'successRedirect' : '/',   // when we login, go to /private 
         'failureRedirect' : '/login'      // otherwise, back to login
     });
-    //res.redirect('/');
 });
 
 //update user
