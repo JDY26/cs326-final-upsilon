@@ -151,7 +151,7 @@ async function generatePosts(){
   };  
 }
 async function fillInHeader(){
-  let userId = window.location.pathname.split('/').slice(-2)[0];
+  let userId = window.location.pathname.split('/').slice(-2)[0];//TODO: Better way to fetch
   let response = await fetch(`https://cs326-finalupsilon.herokuapp.com/users/${userId}`);
   let userData = await response.json();
   let avatarDiv = document.getElementById('userAvatar');
@@ -243,7 +243,6 @@ document.getElementById('newPostSubmit').addEventListener('click', async functio
     postObj['tags'][tag.innerText] = [];
   }));
   postObj['tags']['l1tags'].forEach(function(tag){
-    console.log(`looking at l1tag tagList-${tag}`);
     let subTagList = document.getElementById(`tagList-${tag}`);
     Array.prototype.forEach.call(subTagList.getElementsByTagName('li'), (function(subTag){
       postObj['tags'][tag].push(subTag.innerText);
@@ -254,11 +253,23 @@ document.getElementById('newPostSubmit').addEventListener('click', async functio
     postObj['content']['audioUrl'] = document.getElementById('newPostAudioUrl').value;
   }
   postObj['likes'] = 0;
-  postObj['owner'] = "user0";//TODO: dynamically assign owner
-  postObj['pid'] = "111111";//TODO: dynamically assign pid
+  const username = window.location.pathname.split('/').slice(-2)[0];//TODO: Use session cookie from auth stuff instead
+  postObj['owner'] = username;//TODO: dynamically assign owner in a better way
+  postObj['pid'] = "";//TODO: dynamically assign pid in server.js
   postObj['timestamp'] = Date.now();
-  console.log(postObj);
 
+  //POST postObj to /posts/new endpoint
+  const res = await fetch("https://cs326-finalupsilon.herokuapp.com/posts/new", {
+    method: "post",
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(postObj)
+  });
+  if(res.status !== 201){
+    window.alert(`create post server response: ${res.status} : ${res.body}`);
+  }
 });
 fillInHeader();
 generatePosts();

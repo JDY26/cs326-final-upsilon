@@ -9,6 +9,7 @@ const { MongoClient } = require('mongodb');
 const expressSession = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const crypto = require('crypto');
 
 const DB_NAME = process.env.DB_NAME || "upsilonTestDB";//Specify which DB to use
 
@@ -35,6 +36,9 @@ const session = {
 };
 
 const client = new MongoClient(MONGODB_URI);
+(async function() {
+    await client.connect();
+})();
 //client should be correct now, await client.connect() to connect to db, and then do client.db().whateverCommand() to interact with it. should probably do a client.close() somewhere too?
 
 //Strategy
@@ -60,6 +64,7 @@ app.use('/register', express.static('pages/signupPage'));
 
 
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 //---------------------
 //API Stuff 
 //User Endpoints
@@ -128,9 +133,33 @@ app.post('/users/:username/delete', async function (req, res) {
 //Post Endpoints
 
 //create post
-app.post('/posts/new', function (req, res) {
-    res.status(201);
-    res.send("Post Created");
+app.post('/posts/new', async function (req, res) {
+    let postObj = req.body;
+    const stringToHash = postObj["timestamp"] + postObj["owner"];//String to hash is timestamp followed by owner username, should be unique
+    const hashed = crypto.createHash('sha1').update(stringToHash).digest("hex");//can use sha1 since its not supposed to be secure, just unique
+    postObj["pid"] = hashed;
+    const dbStatus = await createPost(postObj);//maybe stringify?
+
+    
+    if(dbStatus !== null){
+        res.status(201);
+        //res.send("Post Created");
+    }
+    else{
+        res.status(500);
+        res.send("Could not insert post into database");
+    }
+    //add the post to the user's post collection
+    try{
+        await client.db().collection('users').updateOne({username:postObj['owner']}, {
+            $push : {
+                posts: hashed
+            }
+        });
+    } catch(e){
+        res.status(500);
+        res.send("Error inserting post to user")
+    }
 });
 
 //update post
@@ -142,27 +171,12 @@ app.post('/posts/:id', function (req, res) {
 //read post
 app.get('/posts/:id', async function (req, res) {
     const postdata = await findPostByID(req.params.id);
-    /*const postTypes = ['image', 'audio']
-    postdata['contentType'] = postTypes[Math.floor(Math.random()* 2)];//get a random postType
-    postdata['name'] = faker.lorem.words();
-    postdata['description'] = faker.lorem.sentences();
-    postdata['timestamp'] = faker.datatype.timestamp;
-    postdata['owner'] = faker.internet.userName();
-    postdata['uid'] = req.params.id;
-    let tag1 = faker.lorem.word();
-    let tag2 = faker.lorem.word();
-    let subtags1 = [faker.lorem.word(), faker.lorem.word()];
-    let subtags2 = [faker.lorem.word()];
-    postdata['tags'] = {"l1tags":[tag1,tag2]};
-    postdata['tags'][tag1] = subtags1;
-    postdata['tags'][tag2] = subtags2;
-    postdata['content'] = postdata['contentType'] === 'image' ? {"imageUrl": faker.image.city()} : {"albumArt": faker.image.nightlife(), "songUrl": faker.internet.url()};*/
     if(postdata !== null){
         res.status(200);
         res.send(JSON.stringify(postdata));
     } else {
         res.status(404);
-        res.send();
+        res.send(`could not find post with id ${req.params.id}`);
     }
 });
 
@@ -181,13 +195,11 @@ app.post('/posts/:id/delete', async function (req, res) {
 //like post
 app.post('/like/:id', async function (req, res) {
     try {
-        await client.connect();
         await client.db().collection("posts").updateOne({pid : req.params.id}, {
             $inc : {
                 likes : 1
             }
         });
-        await client.close();
     } catch(e) {
         res.status(401);
         res.send("Like failed");
@@ -205,10 +217,7 @@ app.listen(process.env.PORT, () => {
 //Retrieve a post from the database using the ID
 async function findPostByID(postID) {
     try {
-        await client.connect();
         const result = await client.db().collection("posts").findOne({pid : postID});
-
-        await client.close();
         return result;
     } catch (e) {
         console.log(e);
@@ -219,10 +228,7 @@ async function findPostByID(postID) {
 //Retrieve a user from the database using the ID
 async function findUserByID(userID) {
     try {
-        await client.connect();
         const result = await client.db().collection("users").findOne({uid : userID});
-
-        await client.close();
         return result;
     } catch (e) {
         console.log(e);
@@ -233,10 +239,7 @@ async function findUserByID(userID) {
 //Retrieve a user from the database using the username
 async function findUserByUsername(username) {
     try {
-        await client.connect();
         const result = await client.db().collection("users").findOne({username : username});
-
-        await client.close();
         return result;
     } catch (e) {
         console.log(e);
@@ -247,10 +250,7 @@ async function findUserByUsername(username) {
 //Retrieve all posts from a certain user
 async function findUserPosts(userID) {
     try {
-        await client.connect();
         const results = await client.db().collection("posts").find({uid : userID});
-
-        await client.close();
         return results;
     } catch (e) {
         console.log(e);
@@ -261,9 +261,7 @@ async function findUserPosts(userID) {
 //Delete a User Post
 async function removePost(postID) {
     try {
-        await client.connect();
         await client.db().collection("posts").deleteOne({pid : postID});
-        await client.close();
     } catch {
         console.log(e);
     }
@@ -271,9 +269,7 @@ async function removePost(postID) {
 
 async function removeUser(userID) {
     try {
-        await client.connect();
         await client.db().collection("posts").deleteOne({uid : userID});
-        await client.close();
     } catch {
         console.log(e);
     }
@@ -282,15 +278,16 @@ async function removeUser(userID) {
 //Update a User Post *Not Finsihed*
 async function updatePost(postID, updates) {
     try {
-        await client.connect();
+        let results = [];//Array of all results
         for(const update of updates) {
-            await client.db().collection("posts").updateOne({pid : postID}, {
+            const res = await client.db().collection("posts").updateOne({pid : postID}, {
                 $set : {
                     "":""
                 }
             });
+            results.push(res);//add each result to array
         }
-        await client.close();
+        return results;//return array of results? maybe just return if all (promise.all) were successful?
     } catch {
         console.log(e);
     }
@@ -299,9 +296,8 @@ async function updatePost(postID, updates) {
 //Create a User
 async function createUser(userInfo) {
     try {
-        await client.connect();
-        await client.db().collection("users").insertOne(userInfo);
-        await client.close();
+        const result = await client.db().collection("users").insertOne(userInfo);
+        return result;
     } catch {
         console.log(e);
     }
@@ -310,10 +306,17 @@ async function createUser(userInfo) {
 //Create a Post
 async function createPost(postInfo) {
     try {
-        await client.connect();
-        await client.db().collection("posts").insertOne(postInfo);
-        await client.close();
+        const result = await client.db().collection("posts").insertOne(postInfo);
+        return result;
     } catch {
         console.log(e);
     }
 }
+
+// When the process closes, close the mongodb connection.
+async function cleanup(){
+    await client.close();
+    process.exit();
+}
+process.on('SIGINT', cleanup);
+process.on('SIGTERM', cleanup);
