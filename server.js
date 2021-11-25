@@ -9,6 +9,7 @@ const { MongoClient } = require('mongodb');
 const expressSession = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
 
 const DB_NAME = process.env.DB_NAME || "upsilonTestDB";//Specify which DB to use
 
@@ -69,15 +70,30 @@ app.post('/users/new', async function (req, res) {
     let username = req.body.floatingInput;
     let password = req.body.floatingPassword;
     const user = {}; // Not sure how to include password for user yet
+    const login = {};
     user["name"] = "";
     user["picture"] = ""; 
     user["biography"] = "";
     user["username"] = username;
     user["uid"] = Math.floor(Math.random() * 1000000);
     user["yog"] = 2022;
+
+    bcrypt.genSalt(10, function(err, salt) {
+        if (err) {
+            console.log(err);
+        }
+        bcrypt.hash(password, salt, function(err, hash) {
+            if (err) {
+                console.log(err);
+            }
+            login["username"] = username;
+            login["password"] = hash;
+        });
+    });
     
     try {
         await createUser(user);
+        await storeLogin(login);
         res.status(201);
         res.redirect('/');
         res.send("User created");
@@ -319,6 +335,16 @@ async function createPost(postInfo) {
     try {
         await client.connect();
         await client.db().collection("posts").insertOne(postInfo);
+        await client.close();
+    } catch {
+        console.log(e);
+    }
+}
+
+async function storeLogin(loginInfo) {
+    try {
+        await client.connect();
+        await client.db().collection("Logins").insertOne(loginInfo);
         await client.close();
     } catch {
         console.log(e);
