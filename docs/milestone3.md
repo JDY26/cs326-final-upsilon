@@ -21,6 +21,7 @@ user document {
     yog: String
 }
 
+<<<<<<< HEAD
 ## [Link to website](http://https://cs326-finalupsilon.herokuapp.com/ "Link to website")
 # Division of Labor
 ### Casey:
@@ -36,5 +37,7 @@ user document {
   - Reduced outgoing connections causing slowdown & rate limiting
 - Bugfixing on Edit User Feature
 - Project Planning (Issues & Feature Tracking)
-James:
+
+James: Worked on back-end integration for homePage, changed some api endpoints to interact with the database, created some of the CRUD functions for interacting with the database, helped make the edit user profile functionality
+
 Julia:

@@ -63,7 +63,7 @@ async function makeCard(id, pid){
     card.appendChild(cardSubtitle);
     const timestamp = document.createElement("p");
     timestamp.classList.add("card-subtitle", "text-muted", "text-center");
-    timestamp.textContent = json["timestamp"].split(" ")[1];
+    timestamp.textContent = json["timestamp"];
     card.appendChild(timestamp);
     const like = document.createElement("button");
     like.classList.add("btn", "btn-outline-light", "btn-sm", "like-button");
@@ -75,9 +75,9 @@ async function makeCard(id, pid){
     row.appendChild(card);
 }
 
-makeCard("music", "000001").then();
-makeCard("music", "000001").then();
-makeCard("music", "000001").then();
-makeCard("art", "000001").then();
-makeCard("art", "000001").then();
-makeCard("art", "000001").then();
+makeCard("music", "b41687d4ac81e20cfbdea3c128488b9b90c1a29a").then();
+makeCard("music", "b41687d4ac81e20cfbdea3c128488b9b90c1a29a").then();
+makeCard("music", "b41687d4ac81e20cfbdea3c128488b9b90c1a29a").then();
+makeCard("art", "b41687d4ac81e20cfbdea3c128488b9b90c1a29a").then();
+makeCard("art", "b41687d4ac81e20cfbdea3c128488b9b90c1a29a").then();
+makeCard("art", "b41687d4ac81e20cfbdea3c128488b9b90c1a29a").then();
