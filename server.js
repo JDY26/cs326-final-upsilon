@@ -136,13 +136,28 @@ app.post('/posts/new', async function (req, res) {
     const hashed = crypto.createHash('sha1').update(stringToHash).digest("hex");//can use sha1 since its not supposed to be secure, just unique
     postObj["pid"] = hashed;
     const dbStatus = await createPost(postObj);//maybe stringify?
+
+    
     if(dbStatus !== null){
         res.status(201);
-        res.send("Post Created");
+        //res.send("Post Created");
     }
     else{
         res.status(500);
-        res.send("Could not insert into database");
+        res.send("Could not insert post into database");
+    }
+
+    try{
+        await client.connect();
+        await client.db().collection('users').updateOne({username:postObj['owner']}, {
+            $push : {
+                posts: hashed
+            }
+        });
+        await client.close();
+    } catch(e){
+        res.status(500);
+        res.send("Error inserting post to user")
     }
 });
 
