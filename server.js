@@ -133,6 +133,8 @@ app.post('/signin', async (req, res) => {
     let password = req.body.password;
     let remember = req.body.checkbox; 
     console.log(`username: ${username}, password: ${password}, remember-me: ${remember}`);
+    const result = await validatePassword(username, password);
+    console.log(result);
     passport.authenticate('local' , {     
         'successRedirect' : '/',   
         'failureRedirect' : '/login'
@@ -369,6 +371,10 @@ async function storeLogin(loginInfo) {
 
 async function getHash(username) {
     try {
+        const userExists = await findUserByUsername(username);
+        if (!userExists) {
+            return null;
+        }
         const cursor = await client.db().collection("Logins").findOne({username : username});
         const result = cursor.password;
         return result;
@@ -379,20 +385,13 @@ async function getHash(username) {
 }
 
 async function validatePassword(username, password) {
-    if (!findUserByUsername(username)) {
+    const userExists = await findUserByUsername(username);
+    if (!userExists) {
         return false;
     }
-    
     const hash = await getHash(username);
-    bcrypt.compare(password, hash, function(err, res) {
-        if (err) {
-            console.log(err);
-        } else if (!res) {
-            return false;
-        } else {
-            return true;
-        }
-    });
+    const result = await bcrypt.compare(password, hash);
+    return result;
 }
 
 // When the process closes, close the mongodb connection.
