@@ -9,6 +9,7 @@ const { MongoClient } = require('mongodb');
 const expressSession = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const crypto = require('crypto');
 
 const DB_NAME = process.env.DB_NAME || "upsilonTestDB";//Specify which DB to use
 
@@ -60,6 +61,7 @@ app.use('/register', express.static('pages/signupPage'));
 
 
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 //---------------------
 //API Stuff 
 //User Endpoints
@@ -128,9 +130,20 @@ app.post('/users/:username/delete', async function (req, res) {
 //Post Endpoints
 
 //create post
-app.post('/posts/new', function (req, res) {
-    res.status(201);
-    res.send("Post Created");
+app.post('/posts/new', async function (req, res) {
+    let postObj = req.body;
+    const stringToHash = postObj["timestamp"] + postObj["owner"];//String to hash is timestamp followed by owner username, should be unique
+    const hashed = crypto.createHash('sha1').update(stringToHash).digest("hex");//can use sha1 since its not supposed to be secure, just unique
+    postObj["pid"] = hashed;
+    const dbStatus = await createPost(postObj);//maybe stringify?
+    if(dbStatus !== null){
+        res.status(201);
+        res.send("Post Created");
+    }
+    else{
+        res.status(500);
+        res.send("Could not insert into database");
+    }
 });
 
 //update post
@@ -194,7 +207,7 @@ app.post('/like/:id', async function (req, res) {
     }
 });
 
-app.listen(process.env.PORT, () => {
+app.listen(3000, () => {
      console.log(`app listening on port ${process.env.PORT}`);
 });
 
