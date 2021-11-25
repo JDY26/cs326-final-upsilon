@@ -233,7 +233,7 @@ async function findPostByID(postID) {
 //Retrieve a user from the database using the ID
 async function findUserByID(userID) {
     try {
-        const result = await client.db().collection("users").findOne({uid : userID});
+        const result = await client.db().collection("users").findOne({uid : userID});//TODO: Remove this, uid is deprecated, just use username
         return result;
     } catch (e) {
         console.log(e);
@@ -255,7 +255,7 @@ async function findUserByUsername(username) {
 //Retrieve all posts from a certain user
 async function findUserPosts(userID) {
     try {
-        const results = await client.db().collection("posts").find({uid : userID});
+        const results = await client.db().collection("posts").find({uid : userID});//TODO: Remove this, we only do username
         return results;
     } catch (e) {
         console.log(e);
@@ -274,7 +274,7 @@ async function removePost(postID) {
 
 async function removeUser(userID) {
     try {
-        await client.db().collection("posts").deleteOne({uid : userID});
+        await client.db().collection("posts").deleteOne({uid : userID});//TODO: remove this, we only do username
     } catch {
         console.log(e);
     }
