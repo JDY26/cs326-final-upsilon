@@ -24,5 +24,5 @@ user document {
 
 #Division of Labor
 Casey:
-James:
+James: Worked on back-end integration for homePage, changed some api endpoints to interact with the database, created some of the CRUD functions for interacting with the database, helped make the edit user profile functionality
 Julia:

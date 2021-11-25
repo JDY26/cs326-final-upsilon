@@ -63,7 +63,7 @@ async function makeCard(id, pid){
     card.appendChild(cardSubtitle);
     const timestamp = document.createElement("p");
     timestamp.classList.add("card-subtitle", "text-muted", "text-center");
-    timestamp.textContent = json["timestamp"].split(" ")[1];
+    timestamp.textContent = json["timestamp"];
     card.appendChild(timestamp);
     const like = document.createElement("button");
     like.classList.add("btn", "btn-outline-light", "btn-sm", "like-button");
@@ -75,9 +75,9 @@ async function makeCard(id, pid){
     row.appendChild(card);
 }
 
-makeCard("music", "745f27d5c01b30b8f89fbfc9e7f102e445ce48df").then();
-makeCard("music", "745f27d5c01b30b8f89fbfc9e7f102e445ce48df").then();
-makeCard("music", "745f27d5c01b30b8f89fbfc9e7f102e445ce48df").then();
-makeCard("art", "745f27d5c01b30b8f89fbfc9e7f102e445ce48df").then();
-makeCard("art", "745f27d5c01b30b8f89fbfc9e7f102e445ce48df").then();
-makeCard("art", "745f27d5c01b30b8f89fbfc9e7f102e445ce48df").then();
+makeCard("music", "qwertyuiop").then();
+makeCard("music", "qwertyuiop").then();
+makeCard("music", "qwertyuiop").then();
+makeCard("art", "qwertyuiop").then();
+makeCard("art", "qwertyuiop").then();
+makeCard("art", "qwertyuiop").then();
