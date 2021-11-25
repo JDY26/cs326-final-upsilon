@@ -62,6 +62,39 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="editUserForm" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="editUserModalLabel">Edit Profile</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <form id="editUserData">
+                    <div class="mb-3">
+                        <label for="newProfileName">Name</label>
+                        <input type="text" class="form-control" id="newProfileName" placeholder="Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newBiography">Biography</label>
+                        <textarea type="text" class="form-control" id="newBiography" placeholder="Biography" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newProfilePicture">Profile Picture</label>
+                        <input type="text" class="form-control" id="newProfilePicture" placeholder="Direct link to image" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newYoG">Year of Graduation</label>
+                        <input type="text" class="form-control" id="newYoG" placeholder="YYYY">
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="editUserSubmit">Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <nav class="navbar navbar-light bg-light fixed-top">
         <div class="container-fluid collapse">
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
@@ -76,6 +109,7 @@
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <li class="nav-item">
                             <a class="nav-link active" href="https://cs326-finalupsilon.herokuapp.com/login">Login/Sign-Up</a>
+                            <a class="nav-link active" href="https://cs326-finalupsilon.herokuapp.com">Home</a>
                         </li>
                     </ul>
                 </div>
@@ -84,6 +118,7 @@
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="searchField">
                 <button class="btn btn-outline-danger" type="submit" id="search">Search</button>
                 <button class="btn btn-outline-primary" type="button" id="newPost" data-bs-toggle="modal" data-bs-target="#newPostForm">Create Post</button>
+                <button class="btn btn-outline" type="button" id="editUser" data-bs-toggle="modal" data-bs-target="#editUserForm">Edit Profile</button>
             </form>
         </div>
     </nav>

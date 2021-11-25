@@ -97,11 +97,16 @@ app.post('/signin', (req, res) => {
 });
 
 //update user
-app.post('/users/:username', function (req, res) {
-    const body = req.body;
-    
-    res.status(200);
-    res.send("User updated");
+app.post('/usersUpdate/:username', async function (req, res) {
+    const updateUser = req.body;
+    try {
+        await updateUser(req.params.username, updateUser);
+        res.status(200);
+        res.send("User updated");
+    } catch(e){
+        res.status(401);
+        res.send();
+    }
 })
 
 //read user
@@ -270,6 +275,20 @@ async function removePost(postID) {
 async function removeUser(userID) {
     try {
         await client.db().collection("posts").deleteOne({uid : userID});
+    } catch {
+        console.log(e);
+    }
+}
+
+async function updateUser(userID, userUpdate){
+    try {
+        for(const entry in userUpdate){
+            await client.db().collection("users").updateOne({username : userID}, {
+                $set : {
+                    entry : userUpdate[entry]
+                }
+            });
+        }
     } catch {
         console.log(e);
     }

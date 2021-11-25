@@ -271,5 +271,28 @@ document.getElementById('newPostSubmit').addEventListener('click', async functio
     window.alert(`create post server response: ${res.status} : ${res.body}`);
   }
 });
+
+//Edit User Modal Event Listeners
+document.getElementById('editUserForm').addEventListener('shown.bs.modal', function() {
+  document.getElementById('newProfileName').focus();
+});
+
+//Post New User Data
+document.getElementById("editUserSubmit").addEventListener("click", async ()=> {
+  const userObj = {};
+  userObj["name"] = document.getElementById("newProfileName");
+  userObj["biography"] = document.getElementById("newBiography");
+  userObj["profile_picture"] = document.getElementById("newProfilePicture");
+  userObj["yog"] = document.getElementById("newYoG");
+
+  const res = await fetch(`https://cs326-finalupsilon.herokuapp.com/usersUpdate/${window.location.pathname.split('/').slice(-2)[0]}`, {
+    method : "POST",
+    headers : {
+      "Accept" : "application/json",
+      "Content-type" : "application/json"
+    },
+    body : JSON.stringify(userObj)
+  });
+});
 fillInHeader();
 generatePosts();
