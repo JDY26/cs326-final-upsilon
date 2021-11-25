@@ -149,7 +149,7 @@ app.post('/posts/new', async function (req, res) {
         res.status(500);
         res.send("Could not insert post into database");
     }
-
+    //add the post to the user's post collection
     try{
         await client.db().collection('users').updateOne({username:postObj['owner']}, {
             $push : {
@@ -171,27 +171,12 @@ app.post('/posts/:id', function (req, res) {
 //read post
 app.get('/posts/:id', async function (req, res) {
     const postdata = await findPostByID(req.params.id);
-    /*const postTypes = ['image', 'audio']
-    postdata['contentType'] = postTypes[Math.floor(Math.random()* 2)];//get a random postType
-    postdata['name'] = faker.lorem.words();
-    postdata['description'] = faker.lorem.sentences();
-    postdata['timestamp'] = faker.datatype.timestamp;
-    postdata['owner'] = faker.internet.userName();
-    postdata['uid'] = req.params.id;
-    let tag1 = faker.lorem.word();
-    let tag2 = faker.lorem.word();
-    let subtags1 = [faker.lorem.word(), faker.lorem.word()];
-    let subtags2 = [faker.lorem.word()];
-    postdata['tags'] = {"l1tags":[tag1,tag2]};
-    postdata['tags'][tag1] = subtags1;
-    postdata['tags'][tag2] = subtags2;
-    postdata['content'] = postdata['contentType'] === 'image' ? {"imageUrl": faker.image.city()} : {"albumArt": faker.image.nightlife(), "songUrl": faker.internet.url()};*/
     if(postdata !== null){
         res.status(200);
         res.send(JSON.stringify(postdata));
     } else {
         res.status(404);
-        res.send();
+        res.send(`could not find post with id ${req.params.id}`);
     }
 });
 
