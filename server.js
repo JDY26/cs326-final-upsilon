@@ -207,7 +207,7 @@ app.post('/like/:id', async function (req, res) {
     }
 });
 
-app.listen(3000, () => {
+app.listen(process.env.PORT, () => {
      console.log(`app listening on port ${process.env.PORT}`);
 });
 
