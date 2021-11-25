@@ -284,7 +284,6 @@ async function removeUser(userID) {
 async function updateUser(username, userUpdate){
     const updatedUser = JSON.parse(userUpdate);
     try {
-        console.log("made it this far");
         await client.db().collection("users").updateOne({username : username}, {
             $set : {
                 "name" : updatedUser["name"],
