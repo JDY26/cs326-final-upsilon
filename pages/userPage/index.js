@@ -131,6 +131,7 @@ async function generatePosts(){
             username : userData["username"]
           }
         });
+        location.reload();
       } catch(err) {
         console.error(`Error: ${err}`);
       }    
@@ -143,6 +144,7 @@ async function generatePosts(){
             //edit post here
           }
         });
+        location.reload();
       } catch(err) {
         console.error(`Error: ${err}`);
       }    
@@ -293,6 +295,7 @@ document.getElementById("editUserSubmit").addEventListener("click", async ()=> {
     },
     body : JSON.stringify(userObj)
   });
+  location.reload();
 });
 fillInHeader();
 generatePosts();
