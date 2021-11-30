@@ -1,18 +1,22 @@
 # Database Document Descriptions:
-post document {
+Post document
+```js
+{
     pid: String,
     contentType: String,
     name: String,
     description: String,
-    timestamp: String,
+    timestamp: double,
     owner: String,
     uid: String,
-    tags: <Object>,
-    content: Image/Audio,
+    tags: Object,
+    content: Object,
     likes: Integer
 }
-
-user document {
+```
+User document 
+```js
+{
     name: String,
     picture: String,
     biography: String,
@@ -20,6 +24,7 @@ user document {
     posts: Array<String>
     yog: String
 }
+```
 
 ## [Link to website](http://https://cs326-finalupsilon.herokuapp.com/ "Link to website")
 # Division of Labor
