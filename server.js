@@ -189,7 +189,7 @@ app.get('/posts/:id', async function (req, res) {
 //delete post. need POST for auth ?
 app.post('/posts/:id/delete', async function (req, res) {
     try {
-        await removePost(req.params.id);
+        await removePost(req.params.id, req.body.username);
         res.status(200);
         res.send("Post deleted");
     } catch(e) {

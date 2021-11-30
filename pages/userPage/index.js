@@ -128,7 +128,7 @@ async function generatePosts(){
         const response = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${userData["posts"][i]}/delete`, {
           method: 'post',
           body: {
-            // delete post here
+            username : userId
           }
         });
       } catch(err) {
