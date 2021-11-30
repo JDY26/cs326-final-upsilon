@@ -265,9 +265,15 @@ async function findUserPosts(userID) {
 }
 
 //Delete a User Post
-async function removePost(postID) {
+async function removePost(postID, username) {
     try {
         await client.db().collection("posts").deleteOne({pid : postID});
+        await client.db().collection("users").updateOne({username : username}, 
+            {
+                $pull : {
+                    posts : postID
+                }
+            });
     } catch {
         console.log(e);
     }
