@@ -21,7 +21,6 @@ user document {
     yog: String
 }
 
-<<<<<<< HEAD
 ## [Link to website](http://https://cs326-finalupsilon.herokuapp.com/ "Link to website")
 # Division of Labor
 ### Casey:
