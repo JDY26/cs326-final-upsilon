@@ -21,7 +21,7 @@ User document
     picture: String,
     biography: String,
     username: String,
-    posts: Array<String>
+    posts: Array<String>,
     yog: String
 }
 ```
