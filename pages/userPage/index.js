@@ -75,34 +75,34 @@ function generatePostEditModal(editElem){
                 </div>
                 <form>
                     <div class="mb-3">
-                        <label><input type="text" class="form-control" placeholder="Title" required> Edit Post</label>
+                        <label><input type="text" class="form-control editPostTitle" placeholder="Title" required> Edit Post</label>
                     </div>
                     <div class="mb-3">
-                        <label><textarea type="text" class="form-control" placeholder="Description" required></textarea> Description</label>
+                        <label><textarea type="text" class="form-control editPostDescription" placeholder="Description" required></textarea> Description</label>
                     </div>
                     <div class="mb-3">
                         <div class="form-check">
-                            <label class="form-check-label"><input class="form-check-input" type="radio" name="editPostContentType" value="image" checked> Image</label>
+                            <label class="form-check-label"><input class="form-check-input editPostImageType" type="radio" name="editPostContentType" value="image" checked> Image</label>
                         </div>
                         <div class="form-check">
-                            <label class="form-check-label"><input class="form-check-input" type="radio" name="newPostContentType" value="audio"> Audio</label>
+                            <label class="form-check-label"><input class="form-check-input editPostAudioType" type="radio" name="newPostContentType" value="audio"> Audio</label>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label><input type="text" class="form-control" placeholder="Direct link to image" required> Art/Album Cover</label>
+                        <label><input type="text" class="form-control editPostImageUrl" placeholder="Direct link to image" required> Art/Album Cover</label>
                     </div>
                     <div class="mb-3">
-                        <label><input type="text" class="form-control" placeholder="Direct link to audio" required disabled> Audio URL</label>
+                        <label><input type="text" class="form-control editPostAudioUrl" placeholder="Direct link to audio" required disabled> Audio URL</label>
                     </div>
                     <div class="mb-3">
-                        <label><input type="text" class="form-control" placeholder="Example Tag"> Tags</label>
+                        <label><input type="text" class="form-control editPostTags" placeholder="Example Tag"> Tags</label>
                     </div>
-                    <ul class="list-group">
+                    <ul class="list-group l1taglist">
                     </ul>
                 </form>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Post</button>
+                    <button type="button" class="btn btn-primary editModalSubmit" data-bs-dismiss="modal">Post</button>
                 </div>
             </div>
         </div>
@@ -110,12 +110,54 @@ function generatePostEditModal(editElem){
   `
   modalWrapper.innerHTML = modalHtml;
   editElem.appendChild(modalWrapper);
+  modalWrapper.getElementsByClassName("editModalSubmit")[0].addEventListener("click", function(){
+    let postObj = {};
+    postObj['name'] = modalWrapper.getElementsByClassName('editPostTitle')[0].value;
+    if(modalWrapper.getElementsByClassName('editPostImageType')[0].checked){
+      postObj['contentType'] = 'image';
+    }
+    else{
+      postObj['contentType'] = 'audio';
+    }
+    postObj['description'] = modalWrapper.getElementsByClassName('editPostDescription')[0].value;
+    postObj['tags'] = {'l1tags':[]};
+    Array.prototype.forEach.call(modalWrapper.getElementsByClassName('l1taglist')[0].getElementsByTagName('li'), (function(tag){
+      postObj['tags']['l1tags'].push(tag.innerText);
+      postObj['tags'][tag.innerText] = [];
+    }));
+    postObj['tags']['l1tags'].forEach(function(tag){
+      let subTagList = modalWrapper.getElementsByClassName(`tagList-${tag}`)[0];
+      Array.prototype.forEach.call(subTagList.getElementsByTagName('li'), (function(subTag){
+        postObj['tags'][tag].push(subTag.innerText);
+      }));
+    });
+    postObj['content'] = {'imageUrl': modalWrapper.getElementsByClassName('editPostImageUrl')[0].value};
+    if(postObj['contentType'] === 'audio'){
+      postObj['content']['audioUrl'] = modalWrapper.getElementsByClassName('editPostAudioUrl')[0].value;
+    }
+    const username = window.location.pathname.split('/').slice(-2)[0];//TODO: Use session cookie from auth stuff instead
+    postObj['pid'] = editElem.id;
+
+    //POST postObj to /posts/:id endpoint to update
+    const res = await fetch(`/posts/${editElem.id}`, {
+      method: "post",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(postObj)
+    });
+    if(res.status !== 200){
+      window.alert(`edit post server response: ${res.status} : ${res.body}`);
+    }
+  });
+
+
   let editButton = editElem.getElementsByClassName('editPost')[0];
   editButton.addEventListener('click', function () {
     let modal = new bootstrap.Modal(editElem.getElementsByClassName('modal')[0]);
     modal.toggle();
   });
-  //Continue: Add event listener to edit button, pop up modal, submit data as patch/post
 }
 
 function generateArtCard(image, title, description){
@@ -165,8 +207,9 @@ async function generatePosts(){
     postElem.classList.add('userFeed');
     let postHtml = '';
     //postHtml += '<li class="list-group-item userFeed">';
-    let postResponse = await fetch(`/posts/${userData["posts"][i]}`)
+    let postResponse = await fetch(`/posts/${userData["posts"][i]}`);
     let post = await postResponse.json();
+    postElem.id = ${userData["posts"][i]};
     if(post["contentType"] === "audio"){
       postHtml += generateMusicCard(post["content"]["albumArt"],post["content"]["songUrl"],post["name"],post["description"],post["tags"]);
     }
@@ -190,18 +233,6 @@ async function generatePosts(){
         console.error(`Error: ${err}`);
       }    
     });
-    /*postElem.getElementsByClassName('editPost')[0].addEventListener('click', async ()=>{
-      try {     
-        const response = await fetch(`/posts/${userData["posts"][i]}`, {
-          method: 'post',
-          body: {
-            //edit post here
-          }
-        });
-      } catch(err) {
-        console.error(`Error: ${err}`);
-      }    
-    });*/
     generatePostEditModal(postElem);
     document.getElementById('userFeed').appendChild(postElem);
   };  
