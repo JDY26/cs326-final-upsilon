@@ -85,7 +85,7 @@ function generatePostEditModal(editElem){
                             <label class="form-check-label"><input class="form-check-input editPostImageType" type="radio" name="editPostContentType" value="image" checked> Image</label>
                         </div>
                         <div class="form-check">
-                            <label class="form-check-label"><input class="form-check-input editPostAudioType" type="radio" name="newPostContentType" value="audio"> Audio</label>
+                            <label class="form-check-label"><input class="form-check-input editPostAudioType" type="radio" name="editPostContentType" value="audio"> Audio</label>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -95,8 +95,8 @@ function generatePostEditModal(editElem){
                         <label><input type="text" class="form-control editPostAudioUrl" placeholder="Direct link to audio" required disabled> Audio URL</label>
                     </div>
                     <!-- <div class="mb-3"> -->
-                        <label><input type="text" class="form-control editPostTags" placeholder="Example Tag"> Tags</label>
-                    </div>
+                        <!-- <label><input type="text" class="form-control editPostTags" placeholder="Example Tag"> Tags</label> -->
+                    <!-- </div> -->
                     <!-- <ul class="list-group l1taglist"></ul> -->
                 </form>
                 <div class="modal-footer">
@@ -109,7 +109,7 @@ function generatePostEditModal(editElem){
   `
   modalWrapper.innerHTML = modalHtml;
   editElem.appendChild(modalWrapper);
-  modalWrapper.getElementsByClassName("editModalSubmit")[0].addEventListener("click", function(){
+  modalWrapper.getElementsByClassName("editModalSubmit")[0].addEventListener("click", async function(){
     let postObj = {};
     postObj['name'] = modalWrapper.getElementsByClassName('editPostTitle')[0].value;
     if(modalWrapper.getElementsByClassName('editPostImageType')[0].checked){
@@ -152,7 +152,7 @@ function generatePostEditModal(editElem){
   });
 
 
-  let editButton = modalWrapper.getElementsByClassName('editPost')[0];
+  let editButton = editElem.getElementsByClassName('editPost')[0];
   editButton.addEventListener('click', function () {
     let modal = new bootstrap.Modal(modalWrapper.getElementsByClassName('modal')[0]);
     modal.toggle();
