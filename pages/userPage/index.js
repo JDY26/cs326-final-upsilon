@@ -94,11 +94,10 @@ function generatePostEditModal(editElem){
                     <div class="mb-3">
                         <label><input type="text" class="form-control editPostAudioUrl" placeholder="Direct link to audio" required disabled> Audio URL</label>
                     </div>
-                    <div class="mb-3">
+                    <!-- <div class="mb-3"> -->
                         <label><input type="text" class="form-control editPostTags" placeholder="Example Tag"> Tags</label>
                     </div>
-                    <ul class="list-group l1taglist">
-                    </ul>
+                    <!-- <ul class="list-group l1taglist"></ul> -->
                 </form>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -120,7 +119,7 @@ function generatePostEditModal(editElem){
       postObj['contentType'] = 'audio';
     }
     postObj['description'] = modalWrapper.getElementsByClassName('editPostDescription')[0].value;
-    postObj['tags'] = {'l1tags':[]};
+    /*postObj['tags'] = {'l1tags':[]};
     Array.prototype.forEach.call(modalWrapper.getElementsByClassName('l1taglist')[0].getElementsByTagName('li'), (function(tag){
       postObj['tags']['l1tags'].push(tag.innerText);
       postObj['tags'][tag.innerText] = [];
@@ -130,7 +129,7 @@ function generatePostEditModal(editElem){
       Array.prototype.forEach.call(subTagList.getElementsByTagName('li'), (function(subTag){
         postObj['tags'][tag].push(subTag.innerText);
       }));
-    });
+    });*/
     postObj['content'] = {'imageUrl': modalWrapper.getElementsByClassName('editPostImageUrl')[0].value};
     if(postObj['contentType'] === 'audio'){
       postObj['content']['audioUrl'] = modalWrapper.getElementsByClassName('editPostAudioUrl')[0].value;
@@ -153,11 +152,62 @@ function generatePostEditModal(editElem){
   });
 
 
-  let editButton = editElem.getElementsByClassName('editPost')[0];
+  let editButton = modalWrapper.getElementsByClassName('editPost')[0];
   editButton.addEventListener('click', function () {
-    let modal = new bootstrap.Modal(editElem.getElementsByClassName('modal')[0]);
+    let modal = new bootstrap.Modal(modalWrapper.getElementsByClassName('modal')[0]);
     modal.toggle();
   });
+
+  //form greying-out logic and tag stuff (tag not implemented yet)
+  modalWrapper.getElementsByClassName('editPostImageType')[0].addEventListener('click', function() {
+    modalWrapper.getElementsByClassName('editPostAudioUrl')[0].disabled = true;
+    modalWrapper.getElementsByClassName('editPostImageUrl')[0].required = false;
+  });
+  modalWrapper.getElementsByClassName('editPostAudioType')[0].addEventListener('click', function() {
+    modalWrapper.getElementsByClassName('editPostAudioUrl')[0].disabled = false;
+    modalWrapper.getElementsByClassName('editPostImageUrl')[0].required = true;
+  });
+  /*TODO: Tags for editing posts
+  //TODO: Change to use className()[0] instead of id
+  modalWrapper.getElementsByClassName('editPostTags')[0].addEventListener('keypress', function(e){//When pressing enter, add tag currently typed. Add field to add subtags with similar behavior
+    if(e.key === 'Enter'){
+      const tagName = modalWrapper.getElementsByClassName('editPostTags')[0].value;
+      modalWrapper.getElementsByClassName('editPostTags')[0].value = '';
+      const tagElem = document.createElement('li');
+      tagElem.classList.add('list-group-item');
+      tagElem.innerText = tagName;
+      modalWrapper.getElementsByClassName('l1taglist')[0].appendChild(tagElem);
+      const div = document.createElement('div');
+      div.classList.add('mb-3');
+      const label = document.createElement('label');//.innerhtml to avoid no tag (implict label thing)
+      label.for = `tagEntry-${tagName}`;
+      label.innerText = `Subtags for ${tagName}`;
+      const subTagEntry = document.createElement('input');
+      const subTagList = document.createElement('ul');
+      subTagList.classList.add('list-group');
+      subTagList.classList.add('subtag');
+      //subTagList.classList.add('l1tags');
+      subTagEntry.classList.add('form-control');
+      subTagEntry.id = `tagEntry-${tagName}`;
+      subTagList.id = `tagList-${tagName}`;
+      div.appendChild(label);
+      div.appendChild(subTagList);
+      div.appendChild(subTagEntry);
+      document.getElementById('newPostFormData').appendChild(div);
+  
+      subTagEntry.addEventListener('keypress', function(e2){//add subtags to tag list
+        if(e2.key === 'Enter'){
+          const subTagName = subTagEntry.value;
+          subTagEntry.value = '';
+          const subTag = document.createElement('li');
+          subTag.classList.add('list-group-item');
+          subTag.innerText = subTagName;
+          subTagList.appendChild(subTag);
+        }
+      });
+    }
+  });
+  */
 }
 
 function generateArtCard(image, title, description){
