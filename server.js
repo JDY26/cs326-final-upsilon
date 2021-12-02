@@ -189,7 +189,7 @@ app.get('/posts/:id', async function (req, res) {
 //delete post. need POST for auth ?
 app.post('/posts/:id/delete', async function (req, res) {
     try {
-        await removePost(req.params.id);
+        await removePost(req.params.id, req.body["username"]);
         res.status(200);
         res.send("Post deleted");
     } catch(e) {
@@ -265,9 +265,15 @@ async function findUserPosts(userID) {
 }
 
 //Delete a User Post
-async function removePost(postID) {
+async function removePost(postID, username) {
     try {
         await client.db().collection("posts").deleteOne({pid : postID});
+        await client.db().collection("users").updateOne({username : username}, 
+            {
+                $pull : {
+                    posts : postID
+                }
+            });
     } catch {
         console.log(e);
     }

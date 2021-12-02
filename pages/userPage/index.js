@@ -276,9 +276,10 @@ async function generatePosts(){
         const response = await fetch(`/posts/${userData["posts"][i]}/delete`, {
           method: 'post',
           body: {
-            // delete post here
+            username : userData["username"]
           }
         });
+        location.reload();
       } catch(err) {
         console.error(`Error: ${err}`);
       }    
@@ -430,6 +431,7 @@ document.getElementById("editUserSubmit").addEventListener("click", async ()=> {
     },
     body : JSON.stringify(userObj)
   });
+  location.reload();
 });
 fillInHeader();
 generatePosts();
