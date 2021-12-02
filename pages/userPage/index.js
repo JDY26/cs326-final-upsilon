@@ -259,7 +259,7 @@ async function generatePosts(){
     //postHtml += '<li class="list-group-item userFeed">';
     let postResponse = await fetch(`/posts/${userData["posts"][i]}`);
     let post = await postResponse.json();
-    postElem.id = ${userData["posts"][i]};
+    postElem.id = `${userData["posts"][i]};
     if(post["contentType"] === "audio"){
       postHtml += generateMusicCard(post["content"]["albumArt"],post["content"]["songUrl"],post["name"],post["description"],post["tags"]);
     }
