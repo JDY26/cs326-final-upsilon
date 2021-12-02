@@ -62,6 +62,61 @@ function generateMusicCard(albumURL, songURL, title, description){
 `
   return musicCard;
 }
+function generatePostEditModal(editElem){
+  let modalWrapper = document.createElement('div');
+  let modalHtml = `
+  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Edit Post</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <form>
+                    <div class="mb-3">
+                        <label><input type="text" class="form-control" placeholder="Title" required> Edit Post</label>
+                    </div>
+                    <div class="mb-3">
+                        <label><textarea type="text" class="form-control" placeholder="Description" required></textarea> Description</label>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <label class="form-check-label"><input class="form-check-input" type="radio" name="editPostContentType" value="image" checked> Image</label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label"><input class="form-check-input" type="radio" name="newPostContentType" value="audio"> Audio</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label><input type="text" class="form-control" placeholder="Direct link to image" required> Art/Album Cover</label>
+                    </div>
+                    <div class="mb-3">
+                        <label><input type="text" class="form-control" placeholder="Direct link to audio" required disabled> Audio URL</label>
+                    </div>
+                    <div class="mb-3">
+                        <label><input type="text" class="form-control" placeholder="Example Tag"> Tags</label>
+                    </div>
+                    <ul class="list-group">
+                    </ul>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  `
+  modalWrapper.innerHTML = modalHtml;
+  editElem.appendChild(modalWrapper);
+  let editButton = editElem.getElementsByClassName('editPost')[0];
+  editButton.addEventListener('click', function () {
+    let modal = new bootstrap.Modal(editElem.getElementsByClassName('modal')[0]);
+    modal.toggle();
+  });
+  //Continue: Add event listener to edit button, pop up modal, submit data as patch/post
+}
 
 function generateArtCard(image, title, description){
   let artCard = `
@@ -101,7 +156,7 @@ function generateArtCard(image, title, description){
 }
 async function generatePosts(){
   let userId = window.location.pathname.split('/').slice(-2)[0];
-  let response = await fetch(`https://cs326-finalupsilon.herokuapp.com/users/${userId}`);
+  let response = await fetch(`/users/${userId}`);
   let userData = await response.json();
   let feedHtml = '';
   for(let i = 0; i < userData["posts"].length; i++){
@@ -110,7 +165,7 @@ async function generatePosts(){
     postElem.classList.add('userFeed');
     let postHtml = '';
     //postHtml += '<li class="list-group-item userFeed">';
-    let postResponse = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${userData["posts"][i]}`)
+    let postResponse = await fetch(`/posts/${userData["posts"][i]}`)
     let post = await postResponse.json();
     if(post["contentType"] === "audio"){
       postHtml += generateMusicCard(post["content"]["albumArt"],post["content"]["songUrl"],post["name"],post["description"],post["tags"]);
@@ -125,7 +180,7 @@ async function generatePosts(){
     generateTags(post['tags'], postElem);
     postElem.getElementsByClassName('deletePost')[0].addEventListener('click', async () =>{
       try {     
-        const response = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${userData["posts"][i]}/delete`, {
+        const response = await fetch(`/posts/${userData["posts"][i]}/delete`, {
           method: 'post',
           body: {
             // delete post here
@@ -135,9 +190,9 @@ async function generatePosts(){
         console.error(`Error: ${err}`);
       }    
     });
-    postElem.getElementsByClassName('editPost')[0].addEventListener('click', async ()=>{
+    /*postElem.getElementsByClassName('editPost')[0].addEventListener('click', async ()=>{
       try {     
-        const response = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${userData["posts"][i]}`, {
+        const response = await fetch(`/posts/${userData["posts"][i]}`, {
           method: 'post',
           body: {
             //edit post here
@@ -146,13 +201,14 @@ async function generatePosts(){
       } catch(err) {
         console.error(`Error: ${err}`);
       }    
-    });
+    });*/
+    generatePostEditModal(postElem);
     document.getElementById('userFeed').appendChild(postElem);
   };  
 }
 async function fillInHeader(){
   let userId = window.location.pathname.split('/').slice(-2)[0];//TODO: Better way to fetch
-  let response = await fetch(`https://cs326-finalupsilon.herokuapp.com/users/${userId}`);
+  let response = await fetch(`/users/${userId}`);
   let userData = await response.json();
   let avatarDiv = document.getElementById('userAvatar');
   let nameDiv = document.getElementById('name');
@@ -259,7 +315,7 @@ document.getElementById('newPostSubmit').addEventListener('click', async functio
   postObj['timestamp'] = Date.now();
 
   //POST postObj to /posts/new endpoint
-  const res = await fetch("https://cs326-finalupsilon.herokuapp.com/posts/new", {
+  const res = await fetch("/posts/new", {
     method: "post",
     headers: {
       'Accept': 'application/json',
@@ -285,7 +341,7 @@ document.getElementById("editUserSubmit").addEventListener("click", async ()=> {
   userObj["profile_picture"] = document.getElementById("newProfilePicture").value;
   userObj["yog"] = document.getElementById("newYoG").value;
 
-  const res = await fetch(`https://cs326-finalupsilon.herokuapp.com/usersUpdate/${window.location.pathname.split('/').slice(-2)[0]}`, {
+  const res = await fetch(`/usersUpdate/${window.location.pathname.split('/').slice(-2)[0]}`, {//TODO: Use session cookie from auth stuff instead
     method : "POST",
     headers : {
       "Accept" : "application/json",
