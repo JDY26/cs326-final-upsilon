@@ -70,7 +70,7 @@ app.use(bodyParser.json());
 //User Endpoints
 
 //create user
-app.post('/users/new', function (req, res) {
+app.post('/api/users/new', function (req, res) {
     res.status(201);
     let username = req.body.floatingInput;
     let password = req.body.floatingPassword;
@@ -97,7 +97,7 @@ app.post('/signin', (req, res) => {
 });
 
 //update user
-app.post('/usersUpdate/:username', async function (req, res) {
+app.post('/api/usersUpdate/:username', async function (req, res) {
     const updatedUser = req.body;
     try {
         const dbReq = await updateUser(req.params.username, JSON.stringify(updatedUser));
@@ -111,7 +111,7 @@ app.post('/usersUpdate/:username', async function (req, res) {
 })
 
 //read user
-app.get('/users/:username', async function (req, res) {
+app.get('/api/users/:username', async function (req, res) {
     let findUserResponse = await findUserByUsername(req.params.username);
     if(findUserResponse !== null){
         res.status(200);
@@ -124,7 +124,7 @@ app.get('/users/:username', async function (req, res) {
 });
 
 //delete user. Uses POST for authentication (?)
-app.post('/users/:username/delete', async function (req, res) {
+app.post('/api/users/:username/delete', async function (req, res) {
     try{
         await removeUser(req.params.username);
         res.status(200);
@@ -139,7 +139,7 @@ app.post('/users/:username/delete', async function (req, res) {
 //Post Endpoints
 
 //create post
-app.post('/posts/new', async function (req, res) {
+app.post('/api/posts/new', async function (req, res) {//TODO: move the 'add post to user's post collection' to the createPost function
     let postObj = req.body;
     const stringToHash = postObj["timestamp"] + postObj["owner"];//String to hash is timestamp followed by owner username, should be unique
     const hashed = crypto.createHash('sha1').update(stringToHash).digest("hex");//can use sha1 since its not supposed to be secure, just unique
@@ -169,7 +169,7 @@ app.post('/posts/new', async function (req, res) {
 });
 
 //update post
-app.post('/posts/:id', async function (req, res) {
+app.post('/api/posts/:id', async function (req, res) {
     let postObj = req.body;
     let update = await updatePost(req.params.id, postObj);
     res.status(200);
@@ -177,7 +177,7 @@ app.post('/posts/:id', async function (req, res) {
 });
 
 //read post
-app.get('/posts/:id', async function (req, res) {
+app.get('/api/posts/:id', async function (req, res) {
     const postdata = await findPostByID(req.params.id);
     if(postdata !== null){
         res.status(200);
@@ -189,7 +189,7 @@ app.get('/posts/:id', async function (req, res) {
 });
 
 //delete post. need POST for auth ?
-app.post('/posts/:id/delete', async function (req, res) {
+app.post('/api/posts/:id/delete', async function (req, res) {
     try {
         await removePost(req.params.id, req.body["username"]);
         res.status(200);
@@ -201,7 +201,7 @@ app.post('/posts/:id/delete', async function (req, res) {
 });
 
 //like post
-app.post('/like/:id', async function (req, res) {
+app.post('/api/like/:id', async function (req, res) {
     try {
         await client.db().collection("posts").updateOne({pid : req.params.id}, {
             $inc : {
@@ -214,8 +214,25 @@ app.post('/like/:id', async function (req, res) {
     }
 });
 
-app.listen(process.env.PORT, () => {
-     console.log(`app listening on port ${process.env.PORT}`);
+app.get("api/popular/:content", async function(req, res) {
+    try {
+        const posts = await client.db().collection("posts").find({contentType : req.params.content}, {
+            $orderby : {
+                likes : -1
+            }
+        });
+        console.log("test");
+        const pop = [posts[0], posts[1], posts[2]];
+        res.status(200);
+        res.send(JSON.stringify(pop));
+    } catch(e) {
+        res.status(401);
+        res.send("Couldn't retrieve posts");
+    }
+});
+
+app.listen(process.env.PORT || 80, () => {
+     console.log(`app listening on port ${process.env.PORT || 80}`);
 });
 
 //--------------

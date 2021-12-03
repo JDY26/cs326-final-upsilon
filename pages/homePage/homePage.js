@@ -1,24 +1,27 @@
-/*const popular = document.getElementsByClassName("popular")
+const popular = document.getElementsByClassName("popular");
 
-for(button of popular){
-    button.addEventListener("click", () => {
-        const art = document.getElementById("card-wrapper");
-        const children = art.children;
-        const newCards = document.createDocumentFragment();
-        const arr = [1, 2, 0];
-    
-        arr.forEach((index) => {
-            newCards.appendChild(children[index].cloneNode(true));
-        });
-    
-        art.innerHTML = null;
-        art.appendChild(newCards);
+for(const button of popular){
+    button.addEventListener("click", async () => {
+        if(button.classList.contains("audio")){
+            const response = JSON.parse(await (await fetch("/api/popular/audio")).json);
+            for(const post of response){
+                await makeCard("music", post["pid"]);
+            }
+        } else {
+            const response = await fetch("/api/popular/image");
+            console.log(response);
+            for(const post in response){
+                await makeCard("art", post["pid"]);
+            }
+        }
     });
-}*/
+}
+
+
 
 document.getElementById("search").addEventListener("click", () => {
     const searched = document.getElementById("searchField").value;
-    window.location.href = `https://cs326-finalupsilon.herokuapp.com/userPages/${searched}`;
+    window.location.href = `/api/userPages/${searched}`;
 });
 
 window.addEventListener("scroll", () => {
@@ -33,16 +36,8 @@ window.addEventListener("scroll", () => {
     lastScrollTop = scrollTop;
 });
 
-//render a single post
-//Take the div surrounding all of the cards
-//Make a card
-//Fetch img, name, user, likes, timestamp
-//Append it to the parent with an id
-//Initially Sort By Popular
-//Store number of likes
-
 async function makeCard(id, pid){
-    const response = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${pid}`);
+    const response = await fetch(`/api/posts/${pid}`);
     const json = await response.json();
 
     const row = document.getElementById(id);
@@ -58,7 +53,7 @@ async function makeCard(id, pid){
     card.appendChild(cardTitle);
     const cardSubtitle = document.createElement("a");
     cardSubtitle.classList.add("card-subtitle", "text-muted", "text-center", "card-link");
-    cardSubtitle.href = `https://cs326-finalupsilon.herokuapp.com/userPages/${json['owner']}`;
+    cardSubtitle.href = `/api/userPages/${json['owner']}`;
     cardSubtitle.textContent = json["owner"];
     card.appendChild(cardSubtitle);
     const timestamp = document.createElement("p");
@@ -69,15 +64,8 @@ async function makeCard(id, pid){
     like.classList.add("btn", "btn-outline-light", "btn-sm", "like-button");
     like.textContent = "Like";
     like.addEventListener("click", async () => {
-        await fetch(`https://cs326-finalupsilon.herokuapp.com/like/${pid}`);
+        await fetch(`/api/like/${pid}`);
     });
     card.appendChild(like);
     row.appendChild(card);
 }
-
-makeCard("music", "b41687d4ac81e20cfbdea3c128488b9b90c1a29a").then();
-makeCard("music", "b41687d4ac81e20cfbdea3c128488b9b90c1a29a").then();
-makeCard("music", "b41687d4ac81e20cfbdea3c128488b9b90c1a29a").then();
-makeCard("art", "b41687d4ac81e20cfbdea3c128488b9b90c1a29a").then();
-makeCard("art", "b41687d4ac81e20cfbdea3c128488b9b90c1a29a").then();
-makeCard("art", "b41687d4ac81e20cfbdea3c128488b9b90c1a29a").then();
