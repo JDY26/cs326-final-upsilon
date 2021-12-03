@@ -138,7 +138,7 @@ function generatePostEditModal(editElem){
     //postObj['pid'] = editElem.id; Handled in server.js
 
     //POST postObj to /posts/:id endpoint to update
-    const res = await fetch(`/posts/${editElem.id}`, {
+    const res = await fetch(`/api/posts/${editElem.id}`, {
       method: "post",
       headers: {
         'Accept': 'application/json',
@@ -248,7 +248,7 @@ function generateArtCard(image, title, description){
 }
 async function generatePosts(){
   let userId = window.location.pathname.split('/').slice(-2)[0];
-  let response = await fetch(`/users/${userId}`);
+  let response = await fetch(`/api/users/${userId}`);
   let userData = await response.json();
   let feedHtml = '';
   for(let i = 0; i < userData["posts"].length; i++){
@@ -257,7 +257,7 @@ async function generatePosts(){
     postElem.classList.add('userFeed');
     let postHtml = '';
     //postHtml += '<li class="list-group-item userFeed">';
-    let postResponse = await fetch(`/posts/${userData["posts"][i]}`);
+    let postResponse = await fetch(`/api/posts/${userData["posts"][i]}`);
     let post = await postResponse.json();
     postElem.id = userData["posts"][i];
     if(post["contentType"] === "audio"){
@@ -273,7 +273,7 @@ async function generatePosts(){
     generateTags(post['tags'], postElem);
     postElem.getElementsByClassName('deletePost')[0].addEventListener('click', async () =>{
       try {     
-        const response = await fetch(`/posts/${userData["posts"][i]}/delete`, {
+        const response = await fetch(`/api/posts/${userData["posts"][i]}/delete`, {
           method: 'post',
           body: {
             username : userData["username"]
@@ -290,7 +290,7 @@ async function generatePosts(){
 }
 async function fillInHeader(){
   let userId = window.location.pathname.split('/').slice(-2)[0];//TODO: Better way to fetch
-  let response = await fetch(`/users/${userId}`);
+  let response = await fetch(`/api/users/${userId}`);
   let userData = await response.json();
   let avatarDiv = document.getElementById('userAvatar');
   let nameDiv = document.getElementById('name');
@@ -397,7 +397,7 @@ document.getElementById('newPostSubmit').addEventListener('click', async functio
   postObj['timestamp'] = Date.now();
 
   //POST postObj to /posts/new endpoint
-  const res = await fetch("/posts/new", {
+  const res = await fetch("/api/posts/new", {
     method: "post",
     headers: {
       'Accept': 'application/json',
@@ -423,7 +423,7 @@ document.getElementById("editUserSubmit").addEventListener("click", async ()=> {
   userObj["profile_picture"] = document.getElementById("newProfilePicture").value;
   userObj["yog"] = document.getElementById("newYoG").value;
 
-  const res = await fetch(`/usersUpdate/${window.location.pathname.split('/').slice(-2)[0]}`, {//TODO: Use session cookie from auth stuff instead
+  const res = await fetch(`/api/usersUpdate/${window.location.pathname.split('/').slice(-2)[0]}`, {//TODO: Use session cookie from auth stuff instead
     method : "POST",
     headers : {
       "Accept" : "application/json",
