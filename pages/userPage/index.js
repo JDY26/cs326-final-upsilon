@@ -135,7 +135,7 @@ function generatePostEditModal(editElem){
       postObj['content']['audioUrl'] = modalWrapper.getElementsByClassName('editPostAudioUrl')[0].value;
     }
     const username = window.location.pathname.split('/').slice(-2)[0];//TODO: Use session cookie from auth stuff instead
-    postObj['pid'] = editElem.id;
+    //postObj['pid'] = editElem.id; Handled in server.js
 
     //POST postObj to /posts/:id endpoint to update
     const res = await fetch(`/posts/${editElem.id}`, {

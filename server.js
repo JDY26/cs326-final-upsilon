@@ -169,7 +169,9 @@ app.post('/posts/new', async function (req, res) {
 });
 
 //update post
-app.post('/posts/:id', function (req, res) {
+app.post('/posts/:id', async function (req, res) {
+    let postObj = req.body;
+    let update = await updatePost(req.params.id, postObj);
     res.status(200);
     res.send("Post updated");
 });
@@ -307,17 +309,11 @@ async function updateUser(username, userUpdate){
 //Update a User Post *Not Finsihed*
 async function updatePost(postID, updates) {
     try {
-        let results = [];//Array of all results
-        for(const update of updates) {
-            const res = await client.db().collection("posts").updateOne({pid : postID}, {
-                $set : {
-                    "":""
-                }
-            });
-            results.push(res);//add each result to array
-        }
-        return results;//return array of results? maybe just return if all (promise.all) were successful?
-    } catch {
+        const res = await client.db().collection("posts").updateOne({pid : postID}, {
+            $set : updates
+        });
+        return res;
+    } catch(e) {
         console.log(e);
     }
 }
