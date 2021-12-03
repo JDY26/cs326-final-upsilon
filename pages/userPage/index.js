@@ -62,6 +62,153 @@ function generateMusicCard(albumURL, songURL, title, description){
 `
   return musicCard;
 }
+function generatePostEditModal(editElem){
+  let modalWrapper = document.createElement('div');
+  let modalHtml = `
+  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Edit Post</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <form>
+                    <div class="mb-3">
+                        <label><input type="text" class="form-control editPostTitle" placeholder="Title" required> Edit Post</label>
+                    </div>
+                    <div class="mb-3">
+                        <label><textarea type="text" class="form-control editPostDescription" placeholder="Description" required></textarea> Description</label>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <label class="form-check-label"><input class="form-check-input editPostImageType" type="radio" name="editPostContentType" value="image" checked> Image</label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label"><input class="form-check-input editPostAudioType" type="radio" name="editPostContentType" value="audio"> Audio</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label><input type="text" class="form-control editPostImageUrl" placeholder="Direct link to image" required> Art/Album Cover</label>
+                    </div>
+                    <div class="mb-3">
+                        <label><input type="text" class="form-control editPostAudioUrl" placeholder="Direct link to audio" required disabled> Audio URL</label>
+                    </div>
+                    <!-- <div class="mb-3"> -->
+                        <!-- <label><input type="text" class="form-control editPostTags" placeholder="Example Tag"> Tags</label> -->
+                    <!-- </div> -->
+                    <!-- <ul class="list-group l1taglist"></ul> -->
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary editModalSubmit" data-bs-dismiss="modal">Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  `
+  modalWrapper.innerHTML = modalHtml;
+  editElem.appendChild(modalWrapper);
+  modalWrapper.getElementsByClassName("editModalSubmit")[0].addEventListener("click", async function(){
+    let postObj = {};
+    postObj['name'] = modalWrapper.getElementsByClassName('editPostTitle')[0].value;
+    if(modalWrapper.getElementsByClassName('editPostImageType')[0].checked){
+      postObj['contentType'] = 'image';
+    }
+    else{
+      postObj['contentType'] = 'audio';
+    }
+    postObj['description'] = modalWrapper.getElementsByClassName('editPostDescription')[0].value;
+    /*postObj['tags'] = {'l1tags':[]};
+    Array.prototype.forEach.call(modalWrapper.getElementsByClassName('l1taglist')[0].getElementsByTagName('li'), (function(tag){
+      postObj['tags']['l1tags'].push(tag.innerText);
+      postObj['tags'][tag.innerText] = [];
+    }));
+    postObj['tags']['l1tags'].forEach(function(tag){
+      let subTagList = modalWrapper.getElementsByClassName(`tagList-${tag}`)[0];
+      Array.prototype.forEach.call(subTagList.getElementsByTagName('li'), (function(subTag){
+        postObj['tags'][tag].push(subTag.innerText);
+      }));
+    });*/
+    postObj['content'] = {'imageUrl': modalWrapper.getElementsByClassName('editPostImageUrl')[0].value};
+    if(postObj['contentType'] === 'audio'){
+      postObj['content']['audioUrl'] = modalWrapper.getElementsByClassName('editPostAudioUrl')[0].value;
+    }
+    const username = window.location.pathname.split('/').slice(-2)[0];//TODO: Use session cookie from auth stuff instead
+    //postObj['pid'] = editElem.id; Handled in server.js
+
+    //POST postObj to /posts/:id endpoint to update
+    const res = await fetch(`/api/posts/${editElem.id}`, {
+      method: "post",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(postObj)
+    });
+    if(res.status !== 200){
+      window.alert(`edit post server response: ${res.status} : ${res.body}`);
+    }
+  });
+
+
+  let editButton = editElem.getElementsByClassName('editPost')[0];
+  editButton.addEventListener('click', function () {
+    let modal = new bootstrap.Modal(modalWrapper.getElementsByClassName('modal')[0]);
+    modal.toggle();
+  });
+
+  //form greying-out logic and tag stuff (tag not implemented yet)
+  modalWrapper.getElementsByClassName('editPostImageType')[0].addEventListener('click', function() {
+    modalWrapper.getElementsByClassName('editPostAudioUrl')[0].disabled = true;
+    modalWrapper.getElementsByClassName('editPostImageUrl')[0].required = false;
+  });
+  modalWrapper.getElementsByClassName('editPostAudioType')[0].addEventListener('click', function() {
+    modalWrapper.getElementsByClassName('editPostAudioUrl')[0].disabled = false;
+    modalWrapper.getElementsByClassName('editPostImageUrl')[0].required = true;
+  });
+  /*TODO: Tags for editing posts
+  //TODO: Change to use className()[0] instead of id
+  modalWrapper.getElementsByClassName('editPostTags')[0].addEventListener('keypress', function(e){//When pressing enter, add tag currently typed. Add field to add subtags with similar behavior
+    if(e.key === 'Enter'){
+      const tagName = modalWrapper.getElementsByClassName('editPostTags')[0].value;
+      modalWrapper.getElementsByClassName('editPostTags')[0].value = '';
+      const tagElem = document.createElement('li');
+      tagElem.classList.add('list-group-item');
+      tagElem.innerText = tagName;
+      modalWrapper.getElementsByClassName('l1taglist')[0].appendChild(tagElem);
+      const div = document.createElement('div');
+      div.classList.add('mb-3');
+      const label = document.createElement('label');//.innerhtml to avoid no tag (implict label thing)
+      label.for = `tagEntry-${tagName}`;
+      label.innerText = `Subtags for ${tagName}`;
+      const subTagEntry = document.createElement('input');
+      const subTagList = document.createElement('ul');
+      subTagList.classList.add('list-group');
+      subTagList.classList.add('subtag');
+      //subTagList.classList.add('l1tags');
+      subTagEntry.classList.add('form-control');
+      subTagEntry.id = `tagEntry-${tagName}`;
+      subTagList.id = `tagList-${tagName}`;
+      div.appendChild(label);
+      div.appendChild(subTagList);
+      div.appendChild(subTagEntry);
+      document.getElementById('newPostFormData').appendChild(div);
+  
+      subTagEntry.addEventListener('keypress', function(e2){//add subtags to tag list
+        if(e2.key === 'Enter'){
+          const subTagName = subTagEntry.value;
+          subTagEntry.value = '';
+          const subTag = document.createElement('li');
+          subTag.classList.add('list-group-item');
+          subTag.innerText = subTagName;
+          subTagList.appendChild(subTag);
+        }
+      });
+    }
+  });
+  */
+}
 
 function generateArtCard(image, title, description){
   let artCard = `
@@ -101,7 +248,7 @@ function generateArtCard(image, title, description){
 }
 async function generatePosts(){
   let userId = window.location.pathname.split('/').slice(-2)[0];
-  let response = await fetch(`https://cs326-finalupsilon.herokuapp.com/users/${userId}`);
+  let response = await fetch(`/api/users/${userId}`);
   let userData = await response.json();
   let feedHtml = '';
   for(let i = 0; i < userData["posts"].length; i++){
@@ -110,8 +257,9 @@ async function generatePosts(){
     postElem.classList.add('userFeed');
     let postHtml = '';
     //postHtml += '<li class="list-group-item userFeed">';
-    let postResponse = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${userData["posts"][i]}`)
+    let postResponse = await fetch(`/api/posts/${userData["posts"][i]}`);
     let post = await postResponse.json();
+    postElem.id = userData["posts"][i];
     if(post["contentType"] === "audio"){
       postHtml += generateMusicCard(post["content"]["albumArt"],post["content"]["songUrl"],post["name"],post["description"],post["tags"]);
     }
@@ -125,7 +273,7 @@ async function generatePosts(){
     generateTags(post['tags'], postElem);
     postElem.getElementsByClassName('deletePost')[0].addEventListener('click', async () =>{
       try {     
-        const response = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${userData["posts"][i]}/delete`, {
+        const response = await fetch(`/api/posts/${userData["posts"][i]}/delete`, {
           method: 'post',
           body: {
             username : userData["username"]
@@ -136,25 +284,13 @@ async function generatePosts(){
         console.error(`Error: ${err}`);
       }    
     });
-    postElem.getElementsByClassName('editPost')[0].addEventListener('click', async ()=>{
-      try {     
-        const response = await fetch(`https://cs326-finalupsilon.herokuapp.com/posts/${userData["posts"][i]}`, {
-          method: 'post',
-          body: {
-            //edit post here
-          }
-        });
-        location.reload();
-      } catch(err) {
-        console.error(`Error: ${err}`);
-      }    
-    });
+    generatePostEditModal(postElem);
     document.getElementById('userFeed').appendChild(postElem);
   };  
 }
 async function fillInHeader(){
   let userId = window.location.pathname.split('/').slice(-2)[0];//TODO: Better way to fetch
-  let response = await fetch(`https://cs326-finalupsilon.herokuapp.com/users/${userId}`);
+  let response = await fetch(`/api/users/${userId}`);
   let userData = await response.json();
   let avatarDiv = document.getElementById('userAvatar');
   let nameDiv = document.getElementById('name');
@@ -261,7 +397,7 @@ document.getElementById('newPostSubmit').addEventListener('click', async functio
   postObj['timestamp'] = Date.now();
 
   //POST postObj to /posts/new endpoint
-  const res = await fetch("https://cs326-finalupsilon.herokuapp.com/posts/new", {
+  const res = await fetch("/api/posts/new", {
     method: "post",
     headers: {
       'Accept': 'application/json',
@@ -287,7 +423,7 @@ document.getElementById("editUserSubmit").addEventListener("click", async ()=> {
   userObj["profile_picture"] = document.getElementById("newProfilePicture").value;
   userObj["yog"] = document.getElementById("newYoG").value;
 
-  const res = await fetch(`https://cs326-finalupsilon.herokuapp.com/usersUpdate/${window.location.pathname.split('/').slice(-2)[0]}`, {
+  const res = await fetch(`/api/usersUpdate/${window.location.pathname.split('/').slice(-2)[0]}`, {//TODO: Use session cookie from auth stuff instead
     method : "POST",
     headers : {
       "Accept" : "application/json",
