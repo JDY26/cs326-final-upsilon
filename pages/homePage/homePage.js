@@ -8,11 +8,13 @@ for(const button of popular){
                 await makeCard("music", post["pid"]);
             }
         } else {
-            const response = await fetch("/api/popular/image");
+            const response = await (await fetch("/api/popular/image")).json();
             console.log(response);
-            for(const post in response){
+            const json = JSON.parse(response);
+            await makeCard("art", json["pid"]);
+            /*for(const post in response){
                 await makeCard("art", post["pid"]);
-            }
+            }*/
         }
     });
 }

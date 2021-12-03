@@ -18,7 +18,7 @@ let MONGODB_URI;
 //If there is no environment variable (heroku), then use the local one (dev testing)
 if(!process.env.MONGODB_URI){
     let secrets = require('./secrets.json');
-    MONGODB_URI = secrets.MONGODB_URI;
+    MONGODB_URI = secrets.MONGODB_URI + `/${DB_NAME}?retryWrites=true&w=majority`;
     console.log(MONGODB_URI);
 }
 else{
@@ -201,7 +201,7 @@ app.post('/api/posts/:id/delete', async function (req, res) {
 //like post
 app.post('/api/like/:id', async function (req, res) {
     try {
-        await client.db().collection("posts").updateOne({pid : req.params.id}, {
+        await client.db().collection("posts").updateOne({"pid" : req.params.id}, {
             $inc : {
                 likes : 1
             }
@@ -212,17 +212,23 @@ app.post('/api/like/:id', async function (req, res) {
     }
 });
 
-app.get("api/popular/:content", async function(req, res) {
+//Get posts for Popular Sorting
+//Popularity is determined by most likes within past week
+app.get("/api/popular/:content", async function(req, res) {
     try {
-        const posts = await client.db().collection("posts").find({contentType : req.params.content}, {
+        const postCursor = await client.db().collection("posts").find({"contentType" : req.params.content}, {
             $orderby : {
-                likes : -1
+                "likes" : -1
             }
         });
-        console.log("test");
-        const pop = [posts[0], posts[1], posts[2]];
+        let count = 0;
+        const posts = [];
+        while(postCursor.hasNext() && count < 3){
+            posts.push(postCursor.next());
+            count += 1;
+        }
         res.status(200);
-        res.send(JSON.stringify(pop));
+        res.send(JSON.stringify(posts[0]));
     } catch(e) {
         res.status(401);
         res.send("Couldn't retrieve posts");
@@ -284,11 +290,11 @@ async function findUserPosts(userID) {
 //Delete a User Post
 async function removePost(postID, username) {
     try {
-        await client.db().collection("posts").deleteOne({pid : postID});
-        await client.db().collection("users").updateOne({username : username}, 
+        await client.db().collection("posts").deleteOne({"pid" : postID});
+        await client.db().collection("users").updateOne({"username" : username}, 
             {
                 $pull : {
-                    posts : postID
+                    "posts" : postID
                 }
             });
     } catch {
