@@ -142,7 +142,7 @@ app.post('/api/users/:username/delete', async function (req, res) {
 app.post('/api/posts/new', async function (req, res) {//TODO: move the 'add post to user's post collection' to the createPost function
     let postObj = req.body;
     const stringToHash = postObj["timestamp"] + postObj["owner"];//String to hash is timestamp followed by owner username, should be unique
-    const hashed = crypto.createHash('sha1').update(stringToHash).digest("hex");//can use sha1 since its not supposed to be secure, just unique
+    const hashed = {"pid" : crypto.createHash('sha1').update(stringToHash).digest("hex")};//can use sha1 since its not supposed to be secure, just unique
     postObj["pid"] = hashed;
     const dbStatus = await createPost(postObj);//maybe stringify?
 
@@ -191,7 +191,9 @@ app.get('/api/posts/:id', async function (req, res) {
 //delete post. need POST for auth ?
 app.post('/api/posts/:id/delete', async function (req, res) {
     try {
-        await removePost(req.params.id, req.body["username"]);
+        const body = req.body;
+        console.log(body);
+        await removePost(req.params.id, body["username"]);
         res.status(200);
         res.send("Post deleted");
     } catch(e) {
@@ -256,33 +258,11 @@ async function findPostByID(postID) {
     }
 }
 
-//Retrieve a user from the database using the ID
-async function findUserByID(userID) {
-    try {
-        const result = await client.db().collection("users").findOne({uid : userID});//TODO: Remove this, uid is deprecated, just use username
-        return result;
-    } catch (e) {
-        console.log(e);
-        return null;
-    }
-}
-
 //Retrieve a user from the database using the username
 async function findUserByUsername(username) {
     try {
         const result = await client.db().collection("users").findOne({username : username});
         return result;
-    } catch (e) {
-        console.log(e);
-        return null;
-    }
-}
-
-//Retrieve all posts from a certain user
-async function findUserPosts(userID) {
-    try {
-        const results = await client.db().collection("posts").find({uid : userID});//TODO: Remove this, we only do username
-        return results;
     } catch (e) {
         console.log(e);
         return null;
@@ -296,7 +276,9 @@ async function removePost(postID, username) {
         await client.db().collection("users").updateOne({"username" : username}, 
             {
                 $pull : {
-                    "posts" : postID
+                    "posts" : {
+                        "pid" : postID
+                    }
                 }
             });
     } catch {

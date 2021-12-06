@@ -257,9 +257,9 @@ async function generatePosts(){
     postElem.classList.add('userFeed');
     let postHtml = '';
     //postHtml += '<li class="list-group-item userFeed">';
-    let postResponse = await fetch(`/api/posts/${userData["posts"][i]}`);
+    let postResponse = await fetch(`/api/posts/${userData["posts"][i]["pid"]}`);
     let post = await postResponse.json();
-    postElem.id = userData["posts"][i];
+    postElem.id = userData["posts"][i]["pid"];
     if(post["contentType"] === "audio"){
       postHtml += generateMusicCard(post["content"]["albumArt"],post["content"]["songUrl"],post["name"],post["description"],post["tags"]);
     }
@@ -273,13 +273,16 @@ async function generatePosts(){
     generateTags(post['tags'], postElem);
     postElem.getElementsByClassName('deletePost')[0].addEventListener('click', async () =>{
       try {     
-        const response = await fetch(`/api/posts/${userData["posts"][i]}/delete`, {
-          method: 'post',
-          body: {
-            username : userData["username"]
-          }
+        const response = await fetch(`/api/posts/${userData["posts"][i]["pid"]}/delete`, {
+          method : 'post',
+          headers : {
+            "Content-Type" : "application/json"
+          },
+          body : JSON.stringify({
+            "username" : userData["username"]
+          })
         });
-        location.reload();
+        //location.reload();
       } catch(err) {
         console.error(`Error: ${err}`);
       }    
