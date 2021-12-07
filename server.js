@@ -71,7 +71,7 @@ app.use(bodyParser.json());
 
 //create user
 app.post('/api/users/new', function (req, res) {
-    res.status(201);
+    res.status(500);
     let username = req.body.floatingInput;
     let password = req.body.floatingPassword;
     const user = {}; //Not sure how to include password for user yet
