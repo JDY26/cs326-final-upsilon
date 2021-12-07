@@ -31,6 +31,7 @@ for(const button of t){
                 await makeCard("music", post["pid"]);
             }
         } else {
+            art.innerHTML = null;
             const response = await (await fetch("/api/top/image")).json();
             for(const post of response){
                 await makeCard("art", post["pid"]);
@@ -42,11 +43,13 @@ for(const button of t){
 for(const button of n){
     button.addEventListener("click", async () => {
         if(button.classList.contains("audio")){
+            music.innerHTML = null;
             const response = await (await fetch("/api/new/audio")).json();
             for(const post of response){
                 await makeCard("music", post["pid"]);
             }
         } else {
+            art.innerHTML = null;
             const response = await (await fetch("/api/new/image")).json();
             for(const post of response){
                 await makeCard("art", post["pid"]);

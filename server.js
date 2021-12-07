@@ -207,7 +207,7 @@ app.post('/api/like/:id', async function (req, res) {
     try {
         await client.db().collection("posts").updateOne({"pid" : req.params.id}, {
             $inc : {
-                likes : 1
+                "likes" : 1
             }
         });
     } catch(e) {
@@ -225,7 +225,7 @@ app.get("/api/:order/:content", async function(req, res) {
             postCursor = client.db().collection("posts").find({"contentType" : req.params.content}).sort({"likes" : -1});
         } else if (req.params.order === "popular") {
             postCursor = client.db().collection("posts").find({"contentType" : req.params.content, "timestamp" : {
-                $gt : 1637813931392
+                $gt : (Date.now() - 2419200000)
             }}).sort({"likes" : -1});
         } else if (req.params.order === "new") {
             postCursor = client.db().collection("posts").find({"contentType" : req.params.content}).sort({"timestamp" : -1});
