@@ -71,19 +71,26 @@ app.use(bodyParser.json());
 
 //create user
 app.post('/api/users/new', function (req, res) {
-    res.status(500);
-    let username = req.body.floatingInput;
-    let password = req.body.floatingPassword;
-    const user = {}; //Not sure how to include password for user yet
-    user["name"] = "";
-    user["picture"] = "";
-    user["biography"] = "";
-    user["username"] = username;
-    user["uid"] = Math.floor(Math.random() * 1000000);
-    user["yog"] = 2022;
-    console.log(`username: ${username}, password: ${password}`);
-    res.send("User created");
-    res.redirect('/');
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.createHmac('sha256', salt).update(req.body.password).digest('hex');
+    try {
+        const res = await createLogin({'email' : req.body.email, 'username' : req.body.username, 'hash' : hash, 'salt' : salt});
+        const user = {};
+        user["username"] = req.body.username;
+
+        //Default values for rest of user
+        user["name"] = "Default Name";
+        user["biography"] = "Default Bio";
+        user["posts"] = [];
+        user["yog"] = "2023";
+        const res2 = await createUser(user);
+        res.status(201);
+        res.redirect('/login');
+    } catch(e) {
+        console.log(e);
+        res.status(500);
+        res.send();
+    }
 });
 
 // login user
@@ -162,6 +169,8 @@ app.post('/api/posts/new', async function (req, res) {//TODO: move the 'add post
                 posts: hashed
             }
         });
+        res.status(201);
+        res.send();
     } catch(e){
         res.status(500);
         res.send("Error inserting post to user")
@@ -327,6 +336,16 @@ async function updatePost(postID, updates) {
 async function createUser(userInfo) {
     try {
         const result = await client.db().collection("users").insertOne(userInfo);
+        return result;
+    } catch {
+        console.log(e);
+    }
+}
+
+//Create a login for User
+async function createLogin(loginInfo) {
+    try {
+        const result = await client.db().collection("logins").insertOne(loginInfo);
         return result;
     } catch {
         console.log(e);
