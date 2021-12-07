@@ -12,7 +12,6 @@
   </head>
   <body>
     <div class="d-flex flex-column min-vh-100 justify-content-center align-items-center">
-      <form action="/signin" method="post">
       <div class="sign-in">
         <div class="d-flex flex-column align-items-center">
           <h1 class="h3 mb-3">Sign in to UMass Creators</h1>
@@ -25,7 +24,7 @@
           <input name="floatingPassword" type="password" class="form-control" id="floatingPassword" placeholder="password">
           <label for="floatingPassword">Password</label>
         </div>
-        <input class="w-100 btn btn-primary" type="submit">
+        <input class="w-100 btn btn-primary" type="submit" id="loginButton">
         <div class="checkbox">
           <label>
             <input name="checkbox" type="checkbox" value="remember-me"> Keep me signed in

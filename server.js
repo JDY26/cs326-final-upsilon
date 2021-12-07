@@ -41,12 +41,15 @@ const client = new MongoClient(MONGODB_URI);
 })();
 //client should be correct now, await client.connect() to connect to db, and then do client.db().whateverCommand() to interact with it. should probably do a client.close() somewhere too?
 
-//Strategy
-const strategy = new LocalStrategy(
-    async (username, password, done) => {
-        
+passport.use(new LocalStrategy(
+    {usernameField: 'email'},
+    (email, password, done) => {
+        const res = await findLoginByEmail(email);
+        if(res.hash === crypto.createHmac('sha256', res.salt).update(password).digest('hex')){
+            return done(null, res);//?no clue what to put for res
+        } 
     }
-);
+)
 
 //Links to pages
 
@@ -346,6 +349,15 @@ async function createUser(userInfo) {
 async function createLogin(loginInfo) {
     try {
         const result = await client.db().collection("logins").insertOne(loginInfo);
+        return result;
+    } catch {
+        console.log(e);
+    }
+}
+
+async function findLoginByEmail(email) {
+    try {
+        const result = await client.db().collection("logins").findOne({email : email});
         return result;
     } catch {
         console.log(e);
