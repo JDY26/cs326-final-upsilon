@@ -1,20 +1,56 @@
 const popular = document.getElementsByClassName("popular");
+const t = document.getElementsByClassName("top");
+const n = document.getElementsByClassName("new");
+const art = document.getElementById("art");
+const music = document.getElementById("music");
 
 for(const button of popular){
     button.addEventListener("click", async () => {
         if(button.classList.contains("audio")){
-            const response = JSON.parse(await (await fetch("/api/popular/audio")).json);
+            music.innerHTML = null;
+            const response = await (await fetch("/api/popular/audio")).json();
             for(const post of response){
                 await makeCard("music", post["pid"]);
             }
         } else {
+            art.innerHTML = null;
             const response = await (await fetch("/api/popular/image")).json();
-            console.log(response);
-            const json = JSON.parse(response);
-            await makeCard("art", json["pid"]);
-            /*for(const post in response){
+            for(const post of response){
                 await makeCard("art", post["pid"]);
-            }*/
+            }
+        }
+    });
+}
+
+for(const button of t){
+    button.addEventListener("click", async () => {
+        if(button.classList.contains("audio")){
+            music.innerHTML = null;
+            const response = await (await fetch("/api/top/audio")).json();
+            for(const post of response){
+                await makeCard("music", post["pid"]);
+            }
+        } else {
+            const response = await (await fetch("/api/top/image")).json();
+            for(const post of response){
+                await makeCard("art", post["pid"]);
+            }
+        }
+    });
+}
+
+for(const button of n){
+    button.addEventListener("click", async () => {
+        if(button.classList.contains("audio")){
+            const response = await (await fetch("/api/new/audio")).json();
+            for(const post of response){
+                await makeCard("music", post["pid"]);
+            }
+        } else {
+            const response = await (await fetch("/api/new/image")).json();
+            for(const post of response){
+                await makeCard("art", post["pid"]);
+            }
         }
     });
 }

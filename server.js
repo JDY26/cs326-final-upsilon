@@ -218,21 +218,26 @@ app.post('/api/like/:id', async function (req, res) {
 
 //Get posts for Popular Sorting
 //Popularity is determined by most likes within past week
-app.get("/api/popular/:content", async function(req, res) {
+app.get("/api/:order/:content", async function(req, res) {
     try {
-        const postCursor = await client.db().collection("posts").find({"contentType" : req.params.content}, {
-            $orderby : {
-                "likes" : -1
-            }
-        });
+        let postCursor;
+        if(req.params.order === "top") {
+            postCursor = client.db().collection("posts").find({"contentType" : req.params.content}).sort({"likes" : -1});
+        } else if (req.params.order === "popular") {
+            postCursor = client.db().collection("posts").find({"contentType" : req.params.content, "timestamp" : {
+                $gt : 1637813931392
+            }}).sort({"likes" : -1});
+        } else if (req.params.order === "new") {
+            postCursor = client.db().collection("posts").find({"contentType" : req.params.content}).sort({"timestamp" : -1});
+        }
         let count = 0;
         const posts = [];
-        while(postCursor.hasNext() && count < 3){
-            posts.push(postCursor.next());
+        while(postCursor.hasNext() && count < 3) {
+            posts.push(await postCursor.next());
             count += 1;
         }
         res.status(200);
-        res.send(JSON.stringify(posts[0]));
+        res.send(JSON.stringify(posts));
     } catch(e) {
         res.status(401);
         res.send("Couldn't retrieve posts");
