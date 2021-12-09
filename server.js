@@ -216,18 +216,20 @@ app.post('/api/like/:id', async function (req, res) {
     }
 });
 
-//Get posts for Popular Sorting
-//Popularity is determined by most likes within past week
+//Get for popular/top/new buttons
 app.get("/api/:order/:content", async function(req, res) {
     try {
         let postCursor;
         if(req.params.order === "top") {
+            //Returns most liked posts overall
             postCursor = client.db().collection("posts").find({"contentType" : req.params.content}).sort({"likes" : -1});
         } else if (req.params.order === "popular") {
+            //Returns most liked posts uploaded within last month
             postCursor = client.db().collection("posts").find({"contentType" : req.params.content, "timestamp" : {
                 $gt : (Date.now() - 2419200000)
             }}).sort({"likes" : -1});
         } else if (req.params.order === "new") {
+            //Returns most recently uploaded posts
             postCursor = client.db().collection("posts").find({"contentType" : req.params.content}).sort({"timestamp" : -1});
         }
         let count = 0;

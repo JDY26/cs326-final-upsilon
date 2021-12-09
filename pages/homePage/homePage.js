@@ -20,6 +20,7 @@ for(const button of popular){
             }
         }
     });
+    button.dispatchEvent(new Event("click"));
 }
 
 for(const button of t){
@@ -105,7 +106,9 @@ async function makeCard(id, pid){
     like.classList.add("btn", "btn-outline-light", "btn-sm", "like-button");
     like.textContent = "Like";
     like.addEventListener("click", async () => {
-        await fetch(`/api/like/${pid}`);
+        await fetch(`/api/like/${pid}`, {
+            method : "POST"
+        });
     });
     card.appendChild(like);
     row.appendChild(card);
