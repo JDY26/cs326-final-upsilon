@@ -12,7 +12,7 @@ document.getElementById('loginButton').addEventListener('click', async function(
         body: JSON.stringify(postObj)
       });
     if(res.status === 201) {
-        window.location.href = '/';
+        window.location.href = '/home';
     }
     else{
         alert("Error creating user");

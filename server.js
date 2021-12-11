@@ -7,10 +7,11 @@ const faker = require('faker');
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
-const expressSession = require('express-session');
+const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const crypto = require('crypto');
+const flash = require('express-flash');
 
 const DB_NAME = process.env.DB_NAME || "upsilonTestDB";//Specify which DB to use
 
@@ -30,11 +31,6 @@ else{
 //Session configuration
 //Still need to create Secret in heroku, also other session configurations
 
-const session = {
-    secret: process.env.Secret,
-    resave: false,
-    saveUninitialized: false
-};
 
 const client = new MongoClient(MONGODB_URI);
 (async function() {
@@ -46,9 +42,9 @@ passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'},//maybe redundant?
 
-    function(username, password, done) {
+    async function(username, password, done) {
         const res = await findLoginByEmail(username);
-        if(res.hash === crypto.createHmac('sha256', res.salt).update(password).digest('hex')){
+        if(res && res.hash === crypto.createHmac('sha256', res.salt).update(password).digest('hex')){
             return done(null, res);//? I think null for done?
         }
         else{
@@ -61,26 +57,31 @@ passport.serializeUser(function(user, done){
     done(null, user.username)
 });
 
-passport.deserializeUser(function(username, done){
+passport.deserializeUser(async function(username, done){
     const res = await findUserByUsername(username);
     done(err, res);
 });
 
-app.use(expressSession({
+app.use(session({
     genid: (req) => {
         return uuidv4();
-    }
-})
+    },
+    secret: process.env.SECRET || "devSecret",
+    resave: false,
+    saveUninitialized: false
+}));
+
+
 //Links to pages
 
 //homePage
-app.use('/', express.static('pages/homePage/'));
+app.use('/home', passport.authenticate('local', {failureRedirect: '/login'}), express.static('pages/homePage/'));
 
 //userPage
-app.use('/userPages/:id', express.static('pages/userPage/'));
+app.use('/userPages/:id', passport.authenticate('local', {failureRedirect: '/login'}), express.static('pages/userPage/'));
 
 //signinPage
-app.use('/login', express.static('pages/signinPage/'));
+app.use('/login', express.static('pages/signinPage'));
 
 // signupPage
 app.use('/register', express.static('pages/signupPage'));
@@ -88,12 +89,13 @@ app.use('/register', express.static('pages/signupPage'));
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+app.use(flash());
 //---------------------
 //API Stuff 
 //User Endpoints
 
 //create user
-app.post('/api/users/new', function (req, res) {
+app.post('/api/users/new', async function (req, res) {
     const salt = crypto.randomBytes(16).toString('hex');
     const hash = crypto.createHmac('sha256', salt).update(req.body.password).digest('hex');
     try {
@@ -127,7 +129,7 @@ app.post('/signin', passport.authenticate('local', {successRedirect: '/', failur
 // });
 
 //update user
-app.post('/api/usersUpdate/:username', async function (req, res) {
+app.post('/api/usersUpdate/:username', passport.authenticate('local', {failureRedirect: '/login'}), async function (req, res) {
     const updatedUser = req.body;
     try {
         const dbReq = await updateUser(req.params.username, JSON.stringify(updatedUser));
@@ -271,8 +273,8 @@ app.get("/api/popular/:content", async function(req, res) {
     }
 });
 
-app.listen(process.env.PORT || 80, () => {
-     console.log(`app listening on port ${process.env.PORT || 80}`);
+app.listen(process.env.PORT || 3000, () => {
+     console.log(`app listening on port ${process.env.PORT || 3000}`);
 });
 
 //--------------
