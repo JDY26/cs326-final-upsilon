@@ -45,22 +45,26 @@ passport.use(new LocalStrategy({
     async function(username, password, done) {
         const res = await findLoginByEmail(username);
         if(res && res.hash === crypto.createHmac('sha256', res.salt).update(password).digest('hex')){
+            console.log("Logged in");
             return done(null, res);//? I think null for done?
         }
         else{
+            console.log("Failed to log in");
+            console.log(res);
             return done(null, false, {message: 'Error authenticating.'});
         }
     }
 ));
 
 passport.serializeUser(function(user, done){
-    done(null, user.username)
+    console.log("Serializing user");
+    done(null, user.username);
 });
-
+/*
 passport.deserializeUser(async function(username, done){
     const res = await findUserByUsername(username);
     done(err, res);
-});
+});*/
 
 app.use(session({
     genid: (req) => {
@@ -70,15 +74,18 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+app.use(passport.initialize());
 
 
 //Links to pages
 
 //homePage
-app.use('/home', passport.authenticate('local', {failureRedirect: '/login'}), express.static('pages/homePage/'));
-
+app.use('/home', express.static('pages/homePage/'));
+app.get('/home', function(req, res){
+    res.redirect('/home', 200);
+});
 //userPage
-app.use('/userPages/:id', passport.authenticate('local', {failureRedirect: '/login'}), express.static('pages/userPage/'));
+app.use('/userPages/:id', express.static('pages/userPage/'));
 
 //signinPage
 app.use('/login', express.static('pages/signinPage'));
@@ -99,7 +106,7 @@ app.post('/api/users/new', async function (req, res) {
     const salt = crypto.randomBytes(16).toString('hex');
     const hash = crypto.createHmac('sha256', salt).update(req.body.password).digest('hex');
     try {
-        const res = await createLogin({'email' : req.body.email, 'username' : req.body.username, 'hash' : hash, 'salt' : salt});
+        const dbRes1 = await createLogin({'email' : req.body.email, 'username' : req.body.username, 'hash' : hash, 'salt' : salt});
         const user = {};
         user["username"] = req.body.username;//what does this do?
 
@@ -108,7 +115,7 @@ app.post('/api/users/new', async function (req, res) {
         user["biography"] = "Default Bio";
         user["posts"] = [];
         user["yog"] = "2023";
-        const res2 = await createUser(user);
+        const dbRes2 = await createUser(user);
         res.status(201);
         res.redirect('/login');
     } catch(e) {
@@ -119,7 +126,7 @@ app.post('/api/users/new', async function (req, res) {
 });
 
 // login user
-app.post('/signin', passport.authenticate('local', {successRedirect: '/', failureRedirect: '/login', failureFlash: true}));
+app.post('/signin', passport.authenticate('local', {failureRedirect: '/login', failureFlash: true}));
 //     res.status(200);
 //     let username = req.body.floatingInput;
 //     let password = req.body.floatingPassword;
@@ -315,7 +322,7 @@ async function removePost(postID, username) {
                     }
                 }
             });
-    } catch {
+    } catch(e){
         console.log(e);
     }
 }
@@ -323,7 +330,7 @@ async function removePost(postID, username) {
 async function removeUser(userID) {
     try {
         await client.db().collection("posts").deleteOne({uid : userID});//TODO: remove this, we only do username
-    } catch {
+    } catch(e) {
         console.log(e);
     }
 }
@@ -362,7 +369,7 @@ async function createUser(userInfo) {
     try {
         const result = await client.db().collection("users").insertOne(userInfo);
         return result;
-    } catch {
+    } catch(e) {
         console.log(e);
     }
 }
@@ -372,7 +379,7 @@ async function createLogin(loginInfo) {
     try {
         const result = await client.db().collection("logins").insertOne(loginInfo);
         return result;
-    } catch {
+    } catch(e) {
         console.log(e);
     }
 }
@@ -381,7 +388,7 @@ async function findLoginByEmail(email) {
     try {
         const result = await client.db().collection("logins").findOne({email : email});
         return result;
-    } catch {
+    } catch(e) {
         console.log(e);
     }
 }
@@ -391,7 +398,7 @@ async function createPost(postInfo) {
     try {
         const result = await client.db().collection("posts").insertOne(postInfo);
         return result;
-    } catch {
+    } catch(e) {
         console.log(e);
     }
 }
@@ -403,3 +410,4 @@ async function cleanup(){
 }
 process.on('SIGINT', cleanup);
 process.on('SIGTERM', cleanup);
+process.on('SIGQUIT', cleanup);

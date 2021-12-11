@@ -15,6 +15,6 @@ document.getElementById('loginButton').addEventListener('click', async function(
         window.location.href = '/home';
     }
     else{
-        alert("Error creating user");
+        alert("Error logging in");
     }
 });
