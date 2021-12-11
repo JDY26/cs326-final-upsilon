@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const {v4 : uuidv4} = require('uuid');
 //const port = 80;
 const faker = require('faker');
 //https://github.com/Marak/Faker.js#readme
@@ -41,16 +42,35 @@ const client = new MongoClient(MONGODB_URI);
 })();
 //client should be correct now, await client.connect() to connect to db, and then do client.db().whateverCommand() to interact with it. should probably do a client.close() somewhere too?
 
-passport.use(new LocalStrategy(
-    {usernameField: 'email'},
-    (email, password, done) => {
-        const res = await findLoginByEmail(email);
-        if(res.hash === crypto.createHmac('sha256', res.salt).update(password).digest('hex')){
-            return done(null, res);//?no clue what to put for res
-        } 
-    }
-)
+passport.use(new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password'},//maybe redundant?
 
+    function(username, password, done) {
+        const res = await findLoginByEmail(username);
+        if(res.hash === crypto.createHmac('sha256', res.salt).update(password).digest('hex')){
+            return done(null, res);//? I think null for done?
+        }
+        else{
+            return done(null, false, {message: 'Error authenticating.'});
+        }
+    }
+));
+
+passport.serializeUser(function(user, done){
+    done(null, user.username)
+});
+
+passport.deserializeUser(function(username, done){
+    const res = await findUserByUsername(username);
+    done(err, res);
+});
+
+app.use(expressSession({
+    genid: (req) => {
+        return uuidv4();
+    }
+})
 //Links to pages
 
 //homePage
@@ -79,7 +99,7 @@ app.post('/api/users/new', function (req, res) {
     try {
         const res = await createLogin({'email' : req.body.email, 'username' : req.body.username, 'hash' : hash, 'salt' : salt});
         const user = {};
-        user["username"] = req.body.username;
+        user["username"] = req.body.username;//what does this do?
 
         //Default values for rest of user
         user["name"] = "Default Name";
@@ -97,14 +117,14 @@ app.post('/api/users/new', function (req, res) {
 });
 
 // login user
-app.post('/signin', (req, res) => {
-    res.status(200);
-    let username = req.body.floatingInput;
-    let password = req.body.floatingPassword;
-    let remember = req.body.checkbox; 
-    console.log(`username: ${username}, password: ${password}, remember-me: ${remember}`);
-    res.redirect('/');
-});
+app.post('/signin', passport.authenticate('local', {successRedirect: '/', failureRedirect: '/login', failureFlash: true}));
+//     res.status(200);
+//     let username = req.body.floatingInput;
+//     let password = req.body.floatingPassword;
+//     let remember = req.body.checkbox; 
+//     console.log(`username: ${username}, password: ${password}, remember-me: ${remember}`);
+//     res.redirect('/');
+// });
 
 //update user
 app.post('/api/usersUpdate/:username', async function (req, res) {
