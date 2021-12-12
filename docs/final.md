@@ -2,12 +2,20 @@
 ## UMASS CREATORS
 ## Fall 2021
 ## Overview
-Our application is meant to be a space for UMass students to share any creative projects they have been working on. 
+Our application is a space for members of the UMass Community to share their visual and audio art privately with other students. It is a social media platform restricted to just UMass students, so they can share their songs and pictures with a smaller & relatively intimate crowd, compared to posting it on the internet where it is hard to gain a following. It also features a hierarchical-tag system so users can label their creations very precisely, and group them with different-sized sets of similar posts. With some intelligent API use, users can filter all posts to contain a very specific subset of whatever type of content they like. 
 ## Team Members
  - Julia Lin
- - Casey Ryan
+ - Casey Ryan, [caseyryan22465](https://github.com/caseyryan22465)
  - James Yang
 ## User Interface
+* Login
+* Register
+* Home Page
+* User Page
+* Create Post
+* Edit Post
+* Edit Profile
+* Menu
 ## APIs
  - /api/users/new - Creates a new user, the username is passed in req.body
  - /signin - Used to authenticate a login attempt
@@ -63,6 +71,8 @@ Login document
  - /register: The sign-up page for the application
 ## Authentication/Authorization
 Authentication is done through the Sign-Up/Login page, where users enter a username and password. Authenticated users have special permissions for their own user page, where they can create, edit, and delete posts as well as edit their profile. When accessing other user pages, all of these functions are hidden and users can only view the profile and posts.
+
+Passsword Hashing was done with the crypto module from Node.js, using SHA256 hash function and a salt. Login and Session-Authentication was done with Passport.
 ## Division of Labor
  - Julia:
  - Casey:
