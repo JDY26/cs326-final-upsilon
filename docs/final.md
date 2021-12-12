@@ -4,9 +4,9 @@
 ## Overview
 Our application is a space for members of the UMass Community to share their visual and audio art privately with other students. It is a social media platform restricted to just UMass students, so they can share their songs and pictures with a smaller & relatively intimate crowd, compared to posting it on the internet where it is hard to gain a following. It also features a hierarchical-tag system so users can label their creations very precisely, and group them with different-sized sets of similar posts. With some intelligent API use, users can filter all posts to contain a very specific subset of whatever type of content they like. 
 ## Team Members
- - Julia Lin
+ - Julia Lin, [hyuelin](https://github.com/hyuelin)
  - Casey Ryan, [caseyryan22465](https://github.com/caseyryan22465)
- - James Yang
+ - James Yang, [jdy26](https://github.com/jdy26)
 ## User Interface
 * Login
 * Register
