@@ -1,9 +1,9 @@
-document.getElementById('loginButton').addEventListener('click', async function() {
+document.getElementById('loginButton').addEventListener('click', function() {
     let postObj = {};
     postObj['email'] = document.getElementById('floatingInput').value;
     postObj['password'] = document.getElementById('floatingPassword').value;
 
-    const res = await fetch("/signin", {
+    const res = fetch("/signin", {
         method: "post",
         headers: {
           'Accept': 'application/json',
@@ -11,10 +11,5 @@ document.getElementById('loginButton').addEventListener('click', async function(
         },
         body: JSON.stringify(postObj)
       });
-    if(res.status === 201) {
-        window.location.href = '/home';
-    }
-    else{
-        alert("Error logging in");
-    }
+    window.location.href = "/home";
 });

@@ -37,6 +37,9 @@ const client = new MongoClient(MONGODB_URI);
     await client.connect();
 })();
 //client should be correct now, await client.connect() to connect to db, and then do client.db().whateverCommand() to interact with it. should probably do a client.close() somewhere too?
+app.use(function(err, req, res, next) {//prints out all errors
+    console.log(err);
+});
 
 passport.use(new LocalStrategy({
     usernameField: 'email',
@@ -50,7 +53,6 @@ passport.use(new LocalStrategy({
         }
         else{
             console.log("Failed to log in");
-            console.log(res);
             return done(null, false, {message: 'Error authenticating.'});
         }
     }
@@ -60,11 +62,14 @@ passport.serializeUser(function(user, done){
     console.log("Serializing user");
     done(null, user.username);
 });
-/*
-passport.deserializeUser(async function(username, done){
-    const res = await findUserByUsername(username);
-    done(err, res);
-});*/
+
+passport.deserializeUser(function(username,done){
+    console.log("Deserializing user");
+    findUserByUsername(username).then(res => {
+        const jsonRes = JSON.stringify(res);
+        done(null, jsonRes);
+    });
+});
 
 app.use(session({
     genid: (req) => {
@@ -75,15 +80,12 @@ app.use(session({
     saveUninitialized: false
 }));
 app.use(passport.initialize());
-
+app.use(passport.session());
 
 //Links to pages
 
 //homePage
 app.use('/home', express.static('pages/homePage/'));
-app.get('/home', function(req, res){
-    res.redirect('/home', 200);
-});
 //userPage
 app.use('/userPages/:id', express.static('pages/userPage/'));
 
@@ -96,7 +98,7 @@ app.use('/register', express.static('pages/signupPage'));
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-app.use(flash());
+//app.use(flash);
 //---------------------
 //API Stuff 
 //User Endpoints
@@ -118,6 +120,7 @@ app.post('/api/users/new', async function (req, res) {
         const dbRes2 = await createUser(user);
         res.status(201);
         res.redirect('/login');
+        res.send();
     } catch(e) {
         console.log(e);
         res.status(500);
@@ -126,14 +129,11 @@ app.post('/api/users/new', async function (req, res) {
 });
 
 // login user
-app.post('/signin', passport.authenticate('local', {failureRedirect: '/login', failureFlash: true}));
-//     res.status(200);
-//     let username = req.body.floatingInput;
-//     let password = req.body.floatingPassword;
-//     let remember = req.body.checkbox; 
-//     console.log(`username: ${username}, password: ${password}, remember-me: ${remember}`);
-//     res.redirect('/');
-// });
+app.post('/signin',
+    passport.authenticate('local', {failureRedirect: '/login'}),
+    function(req, res) {
+        res.redirect('/home');
+    });
 
 //update user
 app.post('/api/usersUpdate/:username', passport.authenticate('local', {failureRedirect: '/login'}), async function (req, res) {
