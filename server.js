@@ -280,6 +280,13 @@ app.get("/api/popular/:content", async function(req, res) {
     }
 });
 
+
+
+//Catch-all route, must be last
+app.get('*', function (req, res) {
+    res.redirect('/home');
+});
+
 app.listen(process.env.PORT || 3000, () => {
      console.log(`app listening on port ${process.env.PORT || 3000}`);
 });
