@@ -11,7 +11,6 @@ const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const crypto = require('crypto');
-const flash = require('express-flash');
 
 const DB_NAME = process.env.DB_NAME || "upsilonTestDB";//Specify which DB to use
 
@@ -37,10 +36,8 @@ const client = new MongoClient(MONGODB_URI);
     await client.connect();
 })();
 //client should be correct now, await client.connect() to connect to db, and then do client.db().whateverCommand() to interact with it. should probably do a client.close() somewhere too?
-app.use(function(err, req, res, next) {//prints out all errors
-    console.log(err);
-});
 
+//setup authentication strategy
 passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'},//maybe redundant?
@@ -49,7 +46,7 @@ passport.use(new LocalStrategy({
         const res = await findLoginByEmail(username);
         if(res && res.hash === crypto.createHmac('sha256', res.salt).update(password).digest('hex')){
             //console.log("Logged in");
-            return done(null, res);//? I think null for done?
+            return done(null, res);
         }
         else{
             //sconsole.log("Failed to log in");
@@ -58,6 +55,7 @@ passport.use(new LocalStrategy({
     }
 ));
 
+//only need to store username in session, both login and user db have username as key
 passport.serializeUser(function(user, done){
     //console.log("Serializing user");
     done(null, user.username);
@@ -71,6 +69,7 @@ passport.deserializeUser(function(username,done){
     });
 });
 
+//session object configuration
 app.use(session({
     genid: (req) => {
         return uuidv4();
@@ -79,10 +78,12 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
+//need to actually use auth stuff
 app.use(passport.initialize());
 app.use(passport.session());
 
-//Links to pages
+//Links to visible pages
 
 //homePage
 app.use('/home', loggedIn, express.static('pages/homePage/'));
@@ -103,7 +104,6 @@ function loggedIn(req, res, next) {
     req.isAuthenticated() ? next() : res.redirect('/login');
 }
 
-//app.use(flash);
 //---------------------
 //API Stuff 
 //User Endpoints
@@ -113,10 +113,12 @@ app.post('/api/users/new', async function (req, res) {
     const salt = crypto.randomBytes(16).toString('hex');
     const hash = crypto.createHmac('sha256', salt).update(req.body.password).digest('hex');
     try {
+        //First, add the user's login credentials to the login database
         const dbRes1 = await createLogin({'email' : req.body.email, 'username' : req.body.username, 'hash' : hash, 'salt' : salt});
+        
+        //next, create the user profile in the user database
         const user = {};
-        user["username"] = req.body.username;//what does this do?
-
+        user["username"] = req.body.username;
         //Default values for rest of user
         user["name"] = "Default Name";
         user["biography"] = "Default Bio";
@@ -124,7 +126,6 @@ app.post('/api/users/new', async function (req, res) {
         user["yog"] = "2023";
         const dbRes2 = await createUser(user);
         res.status(201);
-        res.redirect('/login');
         res.send();
     } catch(e) {
         console.log(e);
