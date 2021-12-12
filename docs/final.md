@@ -9,13 +9,22 @@ Our application is a space for members of the UMass Community to share their vis
  - James Yang, [jdy26](https://github.com/jdy26)
 ## User Interface
 * Login
+![login](signinFinal.PNG)
 * Register
+![register](registerFinal.PNG)
 * Home Page
+![homepage](homepageFinal.PNG)
 * User Page
+![userpage](userpageFinal.PNG)
 * Create Post
+![createpost](createpostFinal.PNG)
 * Edit Post
+![editpost](editpostFinal.PNG)
 * Edit Profile
+![editprofile](editprofileFinal.PNG)
 * Menu
+![menu](menuFinal.PNG)
+
 ## APIs
  - /api/users/new - Creates a new user, the username is passed in req.body
  - /signin - Used to authenticate a login attempt
