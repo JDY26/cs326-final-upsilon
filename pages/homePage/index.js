@@ -63,7 +63,7 @@ for(const button of n){
 
 document.getElementById("search").addEventListener("click", () => {
     const searched = document.getElementById("searchField").value;
-    window.location.href = `/api/userPages/${searched}`;
+    window.location.href = `/userPages/${searched}`;
 });
 
 window.addEventListener("scroll", () => {
@@ -95,7 +95,7 @@ async function makeCard(id, pid){
     card.appendChild(cardTitle);
     const cardSubtitle = document.createElement("a");
     cardSubtitle.classList.add("card-subtitle", "text-muted", "text-center", "card-link");
-    cardSubtitle.href = `/api/userPages/${json['owner']}`;
+    cardSubtitle.href = `/userPages/${json['owner']}`;
     cardSubtitle.textContent = json["owner"];
     card.appendChild(cardSubtitle);
     const timestamp = document.createElement("p");

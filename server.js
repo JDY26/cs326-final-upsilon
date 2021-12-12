@@ -183,7 +183,7 @@ app.post('/api/users/:username/delete', async function (req, res) {
 app.post('/api/posts/new', async function (req, res) {//TODO: move the 'add post to user's post collection' to the createPost function
     let postObj = req.body;
     const stringToHash = postObj["timestamp"] + postObj["owner"];//String to hash is timestamp followed by owner username, should be unique
-    const hashed = {"pid" : crypto.createHash('sha1').update(stringToHash).digest("hex")};//can use sha1 since its not supposed to be secure, just unique
+    const hashed = crypto.createHash('sha1').update(stringToHash).digest("hex");//can use sha1 since its not supposed to be secure, just unique
     postObj["pid"] = hashed;
     const dbStatus = await createPost(postObj);//maybe stringify?
 
@@ -200,7 +200,7 @@ app.post('/api/posts/new', async function (req, res) {//TODO: move the 'add post
     try{
         await client.db().collection('users').updateOne({username:postObj['owner']}, {
             $push : {
-                posts: hashed
+                posts: {"pid" : hashed}
             }
         });
         res.status(201);
