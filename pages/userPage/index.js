@@ -41,6 +41,7 @@ function generateMusicCard(albumURL, songURL, title, description){
               <p class="card-text d-flex postDescription">
                 ${description}
               </p>
+              <a href=${songURL}>${songURL}</a>
             </div>
         </div>
         <div class="col-md-2">
@@ -261,7 +262,7 @@ async function generatePosts(){
     let post = await postResponse.json();
     postElem.id = userData["posts"][i]["pid"];
     if(post["contentType"] === "audio"){
-      postHtml += generateMusicCard(post["content"]["albumArt"],post["content"]["songUrl"],post["name"],post["description"],post["tags"]);
+      postHtml += generateMusicCard(post["content"]["imageUrl"],post["content"]["audioUrl"],post["name"],post["description"],post["tags"]);
     }
     else if(post["contentType"] === "image"){
       postHtml += generateArtCard(post["content"]["imageUrl"],post["name"],post["description"],post["tags"]);
