@@ -1,24 +1,25 @@
-function generateTags(tags, postElement){;
+function generateTags(tags, postElement) {
+  ;
   let htmlStr = '';
-  let closingStack = [];
-  for(let i = 0; i < tags["l1tags"].length; i++){//2 levels of tags
+  const closingStack = [];
+  for (let i = 0; i < tags['l1tags'].length; i++) {// 2 levels of tags
     htmlStr += '<li class="list-group-item d-flex userPost tagGroup">';
     closingStack.push('</li>');
-    htmlStr += '<div class="row">'
+    htmlStr += '<div class="row">';
     htmlStr += '<div class="col-md-4 tagl1">';
-    htmlStr += `<span class="badge rounded-pill bg-secondary">${tags["l1tags"][i]}</span></div>`;
+    htmlStr += `<span class="badge rounded-pill bg-secondary">${tags['l1tags'][i]}</span></div>`;
     htmlStr += '<div class="col-md-4 tagl2">';
-    closingStack.push('</div>')
-    for(let j = 0; j < tags[tags["l1tags"][i]].length; j++){
-      htmlStr += `<br><span class="badge rounded-pill bg-secondary">${tags[tags["l1tags"][i]][j]}</span>`;
+    closingStack.push('</div>');
+    for (let j = 0; j < tags[tags['l1tags'][i]].length; j++) {
+      htmlStr += `<br><span class="badge rounded-pill bg-secondary">${tags[tags['l1tags'][i]][j]}</span>`;
     }
     htmlStr += closingStack.pop();
     htmlStr += closingStack.pop();
   }
-  postElement.getElementsByClassName("tagList")[0].innerHTML = htmlStr;
+  postElement.getElementsByClassName('tagList')[0].innerHTML = htmlStr;
 }
-function generateMusicCard(albumURL, songURL, title, description){
-  let musicCard = `
+function generateMusicCard(albumURL, songURL, title, description) {
+  const musicCard = `
     <div class="card mb-3 userPost">
       <div class="row">
         <div class="col-md-2 albumcover">
@@ -60,12 +61,12 @@ function generateMusicCard(albumURL, songURL, title, description){
         </div>
       </div>
     </div>
-`
+`;
   return musicCard;
 }
-function generatePostEditModal(editElem){
-  let modalWrapper = document.createElement('div');
-  let modalHtml = `
+function generatePostEditModal(editElem) {
+  const modalWrapper = document.createElement('div');
+  const modalHtml = `
   <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="formModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -107,20 +108,19 @@ function generatePostEditModal(editElem){
             </div>
         </div>
     </div>
-  `
+  `;
   modalWrapper.innerHTML = modalHtml;
   editElem.appendChild(modalWrapper);
-  modalWrapper.getElementsByClassName("editModalSubmit")[0].addEventListener("click", async function(){
-    let postObj = {};
+  modalWrapper.getElementsByClassName('editModalSubmit')[0].addEventListener('click', async function() {
+    const postObj = {};
     postObj['name'] = modalWrapper.getElementsByClassName('editPostTitle')[0].value;
-    if(modalWrapper.getElementsByClassName('editPostImageType')[0].checked){
+    if (modalWrapper.getElementsByClassName('editPostImageType')[0].checked) {
       postObj['contentType'] = 'image';
-    }
-    else{
+    } else {
       postObj['contentType'] = 'audio';
     }
     postObj['description'] = modalWrapper.getElementsByClassName('editPostDescription')[0].value;
-    /*postObj['tags'] = {'l1tags':[]};
+    /* postObj['tags'] = {'l1tags':[]};
     Array.prototype.forEach.call(modalWrapper.getElementsByClassName('l1taglist')[0].getElementsByTagName('li'), (function(tag){
       postObj['tags']['l1tags'].push(tag.innerText);
       postObj['tags'][tag.innerText] = [];
@@ -132,34 +132,34 @@ function generatePostEditModal(editElem){
       }));
     });*/
     postObj['content'] = {'imageUrl': modalWrapper.getElementsByClassName('editPostImageUrl')[0].value};
-    if(postObj['contentType'] === 'audio'){
+    if (postObj['contentType'] === 'audio') {
       postObj['content']['audioUrl'] = modalWrapper.getElementsByClassName('editPostAudioUrl')[0].value;
     }
-    const username = window.location.pathname.split('/').slice(-2)[0];//TODO: Use session cookie from auth stuff instead
-    //postObj['pid'] = editElem.id; Handled in server.js
+    const username = window.location.pathname.split('/').slice(-2)[0];// TODO: Use session cookie from auth stuff instead
+    // postObj['pid'] = editElem.id; Handled in server.js
 
-    //POST postObj to /posts/:id endpoint to update
+    // POST postObj to /posts/:id endpoint to update
     const res = await fetch(`/api/posts/${editElem.id}`, {
-      method: "post",
+      method: 'post',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(postObj)
+      body: JSON.stringify(postObj),
     });
-    if(res.status !== 200){
+    if (res.status !== 200) {
       window.alert(`edit post server response: ${res.status} : ${res.body}`);
     }
   });
 
 
-  let editButton = editElem.getElementsByClassName('editPost')[0];
-  editButton.addEventListener('click', function () {
-    let modal = new bootstrap.Modal(modalWrapper.getElementsByClassName('modal')[0]);
+  const editButton = editElem.getElementsByClassName('editPost')[0];
+  editButton.addEventListener('click', function() {
+    const modal = new bootstrap.Modal(modalWrapper.getElementsByClassName('modal')[0]);
     modal.toggle();
   });
 
-  //form greying-out logic and tag stuff (tag not implemented yet)
+  // form greying-out logic and tag stuff (tag not implemented yet)
   modalWrapper.getElementsByClassName('editPostImageType')[0].addEventListener('click', function() {
     modalWrapper.getElementsByClassName('editPostAudioUrl')[0].disabled = true;
     modalWrapper.getElementsByClassName('editPostImageUrl')[0].required = false;
@@ -168,7 +168,7 @@ function generatePostEditModal(editElem){
     modalWrapper.getElementsByClassName('editPostAudioUrl')[0].disabled = false;
     modalWrapper.getElementsByClassName('editPostImageUrl')[0].required = true;
   });
-  /*TODO: Tags for editing posts
+  /* TODO: Tags for editing posts
   //TODO: Change to use className()[0] instead of id
   modalWrapper.getElementsByClassName('editPostTags')[0].addEventListener('keypress', function(e){//When pressing enter, add tag currently typed. Add field to add subtags with similar behavior
     if(e.key === 'Enter'){
@@ -195,7 +195,7 @@ function generatePostEditModal(editElem){
       div.appendChild(subTagList);
       div.appendChild(subTagEntry);
       document.getElementById('newPostFormData').appendChild(div);
-  
+
       subTagEntry.addEventListener('keypress', function(e2){//add subtags to tag list
         if(e2.key === 'Enter'){
           const subTagName = subTagEntry.value;
@@ -211,8 +211,8 @@ function generatePostEditModal(editElem){
   */
 }
 
-function generateArtCard(image, title, description){
-  let artCard = `
+function generateArtCard(image, title, description) {
+  const artCard = `
   <div class="card-mb-3 userPost">
                   <div class="row">
                     <div class="col-md-6 artImage">
@@ -244,81 +244,79 @@ function generateArtCard(image, title, description){
                     </div>
                   </div>
                 </div>
-  `
+  `;
   return artCard;
 }
-async function generatePosts(){
-  let userId = window.location.pathname.split('/').slice(-2)[0];
-  let response = await fetch(`/api/users/${userId}`);
-  let userData = await response.json();
-  let feedHtml = '';
-  for(let i = 0; i < userData["posts"].length; i++){
-    let postElem = document.createElement('li');
+async function generatePosts() {
+  const userId = window.location.pathname.split('/').slice(-2)[0];
+  const response = await fetch(`/api/users/${userId}`);
+  const userData = await response.json();
+  const feedHtml = '';
+  for (let i = 0; i < userData['posts'].length; i++) {
+    const postElem = document.createElement('li');
     postElem.classList.add('list-group-item');
     postElem.classList.add('userFeed');
     let postHtml = '';
-    //postHtml += '<li class="list-group-item userFeed">';
-    let postResponse = await fetch(`/api/posts/${userData["posts"][i]["pid"]}`);
-    let post = await postResponse.json();
-    postElem.id = userData["posts"][i]["pid"];
-    if(post["contentType"] === "audio"){
-      postHtml += generateMusicCard(post["content"]["imageUrl"],post["content"]["audioUrl"],post["name"],post["description"],post["tags"]);
-    }
-    else if(post["contentType"] === "image"){
-      postHtml += generateArtCard(post["content"]["imageUrl"],post["name"],post["description"],post["tags"]);
-    }
-    else{
-      console.error("Content type is not audio or image");
+    // postHtml += '<li class="list-group-item userFeed">';
+    const postResponse = await fetch(`/api/posts/${userData['posts'][i]['pid']}`);
+    const post = await postResponse.json();
+    postElem.id = userData['posts'][i]['pid'];
+    if (post['contentType'] === 'audio') {
+      postHtml += generateMusicCard(post['content']['imageUrl'], post['content']['audioUrl'], post['name'], post['description'], post['tags']);
+    } else if (post['contentType'] === 'image') {
+      postHtml += generateArtCard(post['content']['imageUrl'], post['name'], post['description'], post['tags']);
+    } else {
+      console.error('Content type is not audio or image');
     }
     postElem.innerHTML = postHtml;
     generateTags(post['tags'], postElem);
     postElem.getElementsByClassName('deletePost')[0].addEventListener('click', async () =>{
-      try {     
-        const response = await fetch(`/api/posts/${userData["posts"][i]["pid"]}/delete`, {
-          method : 'post',
-          headers : {
-            "Content-Type" : "application/json"
+      try {
+        const response = await fetch(`/api/posts/${userData['posts'][i]['pid']}/delete`, {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json',
           },
-          body : JSON.stringify({
-            "username" : userData["username"]
-          })
+          body: JSON.stringify({
+            'username': userData['username'],
+          }),
         });
-        //location.reload();
-      } catch(err) {
+        // location.reload();
+      } catch (err) {
         console.error(`Error: ${err}`);
-      }    
+      }
     });
     generatePostEditModal(postElem);
     document.getElementById('userFeed').appendChild(postElem);
-  };  
+  };
 }
-async function fillInHeader(){
-  let userId = window.location.pathname.split('/').slice(-2)[0];//TODO: Better way to fetch
-  let response = await fetch(`/api/users/${userId}`);
-  let userData = await response.json();
-  let avatarDiv = document.getElementById('userAvatar');
-  let nameDiv = document.getElementById('name');
-  let bioDiv = document.getElementById('bio');
-  let yogDiv = document.getElementById('yog');
-  
-  let avatar = document.createElement('img');
+async function fillInHeader() {
+  const userId = window.location.pathname.split('/').slice(-2)[0];// TODO: Better way to fetch
+  const response = await fetch(`/api/users/${userId}`);
+  const userData = await response.json();
+  const avatarDiv = document.getElementById('userAvatar');
+  const nameDiv = document.getElementById('name');
+  const bioDiv = document.getElementById('bio');
+  const yogDiv = document.getElementById('yog');
+
+  const avatar = document.createElement('img');
   avatar.src = userData['profile_picture'];
   avatar.classList.add('rounded-circle');
   avatarDiv.appendChild(avatar);
 
-  let name = document.createElement('h2');
+  const name = document.createElement('h2');
   name.innerText = userData['name'];
   nameDiv.appendChild(name);
 
-  let bio = document.createElement('p');
+  const bio = document.createElement('p');
   bio.innerText = userData['biography'];
   bioDiv.appendChild(bio);
 
-  let yog = document.createElement('p');
+  const yog = document.createElement('p');
   yog.innerText = `Class of ${userData['yog']}`;
   yogDiv.appendChild(yog);
 }
-//Modal event listeners
+// Modal event listeners
 document.getElementById('newPostForm').addEventListener('shown.bs.modal', function() {
   document.getElementById('newPostTitle').focus();
 });
@@ -330,8 +328,8 @@ document.getElementById('newPostAudioType').addEventListener('click', function()
   document.getElementById('newPostAudioUrl').disabled = false;
   document.getElementById('newPostImageUrl').required = true;
 });
-document.getElementById('newPostTags').addEventListener('keypress', function(e){//When pressing enter, add tag currently typed. Add field to add subtags with similar behavior
-  if(e.key === 'Enter'){
+document.getElementById('newPostTags').addEventListener('keypress', function(e) {// When pressing enter, add tag currently typed. Add field to add subtags with similar behavior
+  if (e.key === 'Enter') {
     const tagName = document.getElementById('newPostTags').value;
     document.getElementById('newPostTags').value = '';
     const tagElem = document.createElement('li');
@@ -347,7 +345,7 @@ document.getElementById('newPostTags').addEventListener('keypress', function(e){
     const subTagList = document.createElement('ul');
     subTagList.classList.add('list-group');
     subTagList.classList.add('subtag');
-    //subTagList.classList.add('l1tags');
+    // subTagList.classList.add('l1tags');
     subTagEntry.classList.add('form-control');
     subTagEntry.id = `tagEntry-${tagName}`;
     subTagList.id = `tagList-${tagName}`;
@@ -356,8 +354,8 @@ document.getElementById('newPostTags').addEventListener('keypress', function(e){
     div.appendChild(subTagEntry);
     document.getElementById('newPostFormData').appendChild(div);
 
-    subTagEntry.addEventListener('keypress', function(e2){//add subtags to tag list
-      if(e2.key === 'Enter'){
+    subTagEntry.addEventListener('keypress', function(e2) {// add subtags to tag list
+      if (e2.key === 'Enter') {
         const subTagName = subTagEntry.value;
         subTagEntry.value = '';
         const subTag = document.createElement('li');
@@ -368,77 +366,76 @@ document.getElementById('newPostTags').addEventListener('keypress', function(e){
     });
   }
 });
-//Submit new post form data to server
+// Submit new post form data to server
 document.getElementById('newPostSubmit').addEventListener('click', async function() {
-  let postObj = {};
+  const postObj = {};
   postObj['name'] = document.getElementById('newPostTitle').value;
-  if(document.getElementById('newPostImageType').checked){
+  if (document.getElementById('newPostImageType').checked) {
     postObj['contentType'] = 'image';
-  }
-  else{
+  } else {
     postObj['contentType'] = 'audio';
   }
   postObj['description'] = document.getElementById('newPostDescription').value;
-  postObj['tags'] = {'l1tags':[]};
-  Array.prototype.forEach.call(document.getElementById('l1taglist').getElementsByTagName('li'), (function(tag){
+  postObj['tags'] = {'l1tags': []};
+  Array.prototype.forEach.call(document.getElementById('l1taglist').getElementsByTagName('li'), (function(tag) {
     postObj['tags']['l1tags'].push(tag.innerText);
     postObj['tags'][tag.innerText] = [];
   }));
-  postObj['tags']['l1tags'].forEach(function(tag){
-    let subTagList = document.getElementById(`tagList-${tag}`);
-    Array.prototype.forEach.call(subTagList.getElementsByTagName('li'), (function(subTag){
+  postObj['tags']['l1tags'].forEach(function(tag) {
+    const subTagList = document.getElementById(`tagList-${tag}`);
+    Array.prototype.forEach.call(subTagList.getElementsByTagName('li'), (function(subTag) {
       postObj['tags'][tag].push(subTag.innerText);
     }));
   });
   postObj['content'] = {'imageUrl': document.getElementById('newPostImageUrl').value};
-  if(postObj['contentType'] === 'audio'){
+  if (postObj['contentType'] === 'audio') {
     postObj['content']['audioUrl'] = document.getElementById('newPostAudioUrl').value;
   }
   postObj['likes'] = 0;
-  const username = window.location.pathname.split('/').slice(-2)[0];//TODO: Use session cookie from auth stuff instead
-  postObj['owner'] = username;//TODO: dynamically assign owner in a better way
-  postObj['pid'] = "";//TODO: dynamically assign pid in server.js
+  const username = window.location.pathname.split('/').slice(-2)[0];// TODO: Use session cookie from auth stuff instead
+  postObj['owner'] = username;// TODO: dynamically assign owner in a better way
+  postObj['pid'] = '';// TODO: dynamically assign pid in server.js
   postObj['timestamp'] = Date.now();
 
-  //POST postObj to /posts/new endpoint
-  const res = await fetch("/api/posts/new", {
-    method: "post",
+  // POST postObj to /posts/new endpoint
+  const res = await fetch('/api/posts/new', {
+    method: 'post',
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(postObj)
+    body: JSON.stringify(postObj),
   });
-  if(res.status !== 201){
+  if (res.status !== 201) {
     window.alert(`create post server response: ${res.status} : ${res.body}`);
   }
 });
 
-//Edit User Modal Event Listeners
+// Edit User Modal Event Listeners
 document.getElementById('editUserForm').addEventListener('shown.bs.modal', function() {
   document.getElementById('newProfileName').focus();
 });
 
-//Post New User Data
-document.getElementById("editUserSubmit").addEventListener("click", async ()=> {
+// Post New User Data
+document.getElementById('editUserSubmit').addEventListener('click', async ()=> {
   const userObj = {};
-  userObj["name"] = document.getElementById("newProfileName").value;
-  userObj["biography"] = document.getElementById("newBiography").value;
-  userObj["profile_picture"] = document.getElementById("newProfilePicture").value;
-  userObj["yog"] = document.getElementById("newYoG").value;
+  userObj['name'] = document.getElementById('newProfileName').value;
+  userObj['biography'] = document.getElementById('newBiography').value;
+  userObj['profile_picture'] = document.getElementById('newProfilePicture').value;
+  userObj['yog'] = document.getElementById('newYoG').value;
 
-  const res = await fetch(`/api/usersUpdate/${window.location.pathname.split('/').slice(-2)[0]}`, {//TODO: Use session cookie from auth stuff instead
-    method : "POST",
-    headers : {
-      "Accept" : "application/json",
-      "Content-type" : "application/json"
+  const res = await fetch(`/api/usersUpdate/${window.location.pathname.split('/').slice(-2)[0]}`, {// TODO: Use session cookie from auth stuff instead
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-type': 'application/json',
     },
-    body : JSON.stringify(userObj)
+    body: JSON.stringify(userObj),
   });
   location.reload();
 });
-document.getElementById("search").addEventListener("click", () => {
-  const searched = document.getElementById("searchField").value;
+document.getElementById('search').addEventListener('click', () => {
+  const searched = document.getElementById('searchField').value;
   window.location.href = `/userPages/${searched}`;
 });
 fillInHeader();
