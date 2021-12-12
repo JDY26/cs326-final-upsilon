@@ -257,18 +257,16 @@ async function generatePosts() {
     postElem.classList.add('list-group-item');
     postElem.classList.add('userFeed');
     let postHtml = '';
-    //postHtml += '<li class="list-group-item userFeed">';
-    let postResponse = await fetch(`/api/posts/${userData["posts"][i]["pid"]}`);
-    let post = await postResponse.json();
-    postElem.id = userData["posts"][i]["pid"];
-    if(post["contentType"] === "audio"){
-      postHtml += generateMusicCard(post["content"]["imageUrl"],post["content"]["audioUrl"],post["name"],post["description"],post["tags"]);
-    }
-    else if(post["contentType"] === "image"){
-      postHtml += generateArtCard(post["content"]["imageUrl"],post["name"],post["description"],post["tags"]);
-    }
-    else{
-      console.error("Content type is not audio or image");
+    // postHtml += '<li class="list-group-item userFeed">';
+    const postResponse = await fetch(`/api/posts/${userData['posts'][i]['pid']}`);
+    const post = await postResponse.json();
+    postElem.id = userData['posts'][i]['pid'];
+    if (post['contentType'] === 'audio') {
+      postHtml += generateMusicCard(post['content']['imageUrl'], post['content']['audioUrl'], post['name'], post['description'], post['tags']);
+    } else if (post['contentType'] === 'image') {
+      postHtml += generateArtCard(post['content']['imageUrl'], post['name'], post['description'], post['tags']);
+    } else {
+      console.error('Content type is not audio or image');
     }
     postElem.innerHTML = postHtml;
     generateTags(post['tags'], postElem);
@@ -436,8 +434,8 @@ document.getElementById('editUserSubmit').addEventListener('click', async ()=> {
   });
   location.reload();
 });
-document.getElementById("search").addEventListener("click", () => {
-  const searched = document.getElementById("searchField").value;
+document.getElementById('search').addEventListener('click', () => {
+  const searched = document.getElementById('searchField').value;
   window.location.href = `/userPages/${searched}`;
 });
 fillInHeader();
