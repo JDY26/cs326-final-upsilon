@@ -48,23 +48,23 @@ passport.use(new LocalStrategy({
     async function(username, password, done) {
         const res = await findLoginByEmail(username);
         if(res && res.hash === crypto.createHmac('sha256', res.salt).update(password).digest('hex')){
-            console.log("Logged in");
+            //console.log("Logged in");
             return done(null, res);//? I think null for done?
         }
         else{
-            console.log("Failed to log in");
+            //sconsole.log("Failed to log in");
             return done(null, false, {message: 'Error authenticating.'});
         }
     }
 ));
 
 passport.serializeUser(function(user, done){
-    console.log("Serializing user");
+    //console.log("Serializing user");
     done(null, user.username);
 });
 
 passport.deserializeUser(function(username,done){
-    console.log("Deserializing user");
+    //console.log("Deserializing user");
     findUserByUsername(username).then(res => {
         const jsonRes = JSON.stringify(res);
         done(null, jsonRes);
@@ -85,9 +85,9 @@ app.use(passport.session());
 //Links to pages
 
 //homePage
-app.use('/home', express.static('pages/homePage/'));
+app.use('/home', loggedIn, express.static('pages/homePage/'));
 //userPage
-app.use('/userPages/:id', express.static('pages/userPage/'));
+app.use('/userPages/:id', loggedIn, express.static('pages/userPage/'));
 
 //signinPage
 app.use('/login', express.static('pages/signinPage'));
@@ -98,6 +98,11 @@ app.use('/register', express.static('pages/signupPage'));
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+
+function loggedIn(req, res, next) {
+    req.isAuthenticated() ? next() : res.redirect('/login');
+}
+
 //app.use(flash);
 //---------------------
 //API Stuff 
@@ -129,14 +134,10 @@ app.post('/api/users/new', async function (req, res) {
 });
 
 // login user
-app.post('/signin',
-    passport.authenticate('local', {failureRedirect: '/login'}),
-    function(req, res) {
-        res.redirect('/home');
-    });
+app.post('/signin', passport.authenticate('local', {failureRedirect: '/login'})); // upon successful login, signinPage/index.js will redirect to the homePage
 
 //update user
-app.post('/api/usersUpdate/:username', passport.authenticate('local', {failureRedirect: '/login'}), async function (req, res) {
+app.post('/api/usersUpdate/:username', async function (req, res) {
     const updatedUser = req.body;
     try {
         const dbReq = await updateUser(req.params.username, JSON.stringify(updatedUser));
@@ -233,7 +234,6 @@ app.get('/api/posts/:id', async function (req, res) {
 app.post('/api/posts/:id/delete', async function (req, res) {
     try {
         const body = req.body;
-        console.log(body);
         await removePost(req.params.id, body["username"]);
         res.status(200);
         res.send("Post deleted");
