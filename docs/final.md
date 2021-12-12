@@ -9,6 +9,17 @@ Our application is meant to be a space for UMass students to share any creative 
  - James Yang
 ## User Interface
 ## APIs
+ - /api/users/new - Creates a new user, the username is passed in req.body
+ - /signin - Used to authenticate a login attempt
+ - /api/usersUpdate/:username - Update the user sepcified by :username, the updates are passed in req.body
+ - /api/users/:username - Retrieves the user data specified in :username
+ - /api/users/:username/delete - Deletes user specified by :username
+ - /api/posts/new - Create a new post, post data is passed in req.body
+ - /api/posts/:id - Update the post specified by :id, the updates are passed in req.body, POST
+ - /api/posts/:id - Retrieve the post specified by :id, GET
+ - /api/posts/:id/delete - Deletes the post specified by :id and removes the post from the associated user
+ - /api/like/:id - Increments the likes of the post specified by :id by 1
+ - /api/:order/:content - Retrieves three posts of type :content, either image or audio, based on the ordering specified by :order, either top, popular, or new.
 ## Database
 Post document
 ```js
@@ -46,17 +57,19 @@ Login document
 }
 ```
 ## URL Routes/Mappings
- - /homePage: The home page of the application
- - /userPages/:user: The profile of the user specified in :user
- - /login: The login page for the application
- - /signup: The sign-up page for the application
+ - /home: The home page of the application
+ - /userPages/:id: The profile of the user specified in :id
+ - /login: The login page for the application, every page redirects here if the user is not logged in
+ - /register: The sign-up page for the application
 ## Authentication/Authorization
 Authentication is done through the Sign-Up/Login page, where users enter a username and password. Authenticated users have special permissions for their own user page, where they can create, edit, and delete posts as well as edit their profile. When accessing other user pages, all of these functions are hidden and users can only view the profile and posts.
 ## Division of Labor
  - Julia:
  - Casey:
- - James:
+ - James: Wrote the html, js, and css for the home page. Helped make some of the API endpoints, wrote some of the mongodb CRUD functions, helped a little with authentication and sessions. Also helped with the delete/edit post functionality and some of the post interface.
 ## Conclusion
+This project was a good experience for working on an application as part of a team. Initially, our design was to create a tumblr/Reddit style application for UMass students to share projects they have created. During the creation of the application, we decided to focus down to images and audio uploads to make it simpler. Authentication also proved to add some difficulties as we had to adjust the way the pages were being served so they would work with passports redirects. Audio also proved to be a bit more difficult than initially expected, so instead of playing audio through our application and taking audio file uploads, we simply store links to other music/video hosting sites. While the audio is not stored locally, we figured this would be a good solution as we still offer a medium to share. Besides these large changes, some smaller adjustments from our original idea were made to the interface and posts. This project was also a good opportunity to learn more about routing, database interactions, authentication and front-end development beyond what we learned in class.
+
 
 Hosted Application Link: https://cs326-finalupsilon.herokuapp.com/
 
