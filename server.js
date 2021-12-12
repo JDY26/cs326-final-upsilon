@@ -1,12 +1,13 @@
 const express = require('express');
 const app = express();
+const {v4 : uuidv4} = require('uuid');
 //const port = 80;
 const faker = require('faker');
 //https://github.com/Marak/Faker.js#readme
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
-const expressSession = require('express-session');
+const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const crypto = require('crypto');
@@ -29,11 +30,6 @@ else{
 //Session configuration
 //Still need to create Secret in heroku, also other session configurations
 
-const session = {
-    secret: process.env.Secret,
-    resave: false,
-    saveUninitialized: false
-};
 
 const client = new MongoClient(MONGODB_URI);
 (async function() {
@@ -41,23 +37,61 @@ const client = new MongoClient(MONGODB_URI);
 })();
 //client should be correct now, await client.connect() to connect to db, and then do client.db().whateverCommand() to interact with it. should probably do a client.close() somewhere too?
 
-//Strategy
-const strategy = new LocalStrategy(
-    async (username, password, done) => {
-        
-    }
-);
+//setup authentication strategy
+passport.use(new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password'},//maybe redundant?
 
-//Links to pages
+    async function(username, password, done) {
+        const res = await findLoginByEmail(username);
+        if(res && res.hash === crypto.createHmac('sha256', res.salt).update(password).digest('hex')){
+            //console.log("Logged in");
+            return done(null, res);
+        }
+        else{
+            //sconsole.log("Failed to log in");
+            return done(null, false, {message: 'Error authenticating.'});
+        }
+    }
+));
+
+//only need to store username in session, both login and user db have username as key
+passport.serializeUser(function(user, done){
+    //console.log("Serializing user");
+    done(null, user.username);
+});
+
+passport.deserializeUser(function(username,done){
+    //console.log("Deserializing user");
+    findUserByUsername(username).then(res => {
+        const jsonRes = JSON.stringify(res);
+        done(null, jsonRes);
+    });
+});
+
+//session object configuration
+app.use(session({
+    genid: (req) => {
+        return uuidv4();
+    },
+    secret: process.env.SECRET || "devSecret",
+    resave: false,
+    saveUninitialized: false
+}));
+
+//need to actually use auth stuff
+app.use(passport.initialize());
+app.use(passport.session());
+
+//Links to visible pages
 
 //homePage
-app.use('/', express.static('pages/homePage/'));
-
+app.use('/home', loggedIn, express.static('pages/homePage/'));
 //userPage
-app.use('/userPages/:id', express.static('pages/userPage/'));
+app.use('/userPages/:id', loggedIn, express.static('pages/userPage/'));
 
 //signinPage
-app.use('/login', express.static('pages/signinPage/'));
+app.use('/login', express.static('pages/signinPage'));
 
 // signupPage
 app.use('/register', express.static('pages/signupPage'));
@@ -65,36 +99,43 @@ app.use('/register', express.static('pages/signupPage'));
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+
+function loggedIn(req, res, next) {
+    req.isAuthenticated() ? next() : res.redirect('/login');
+}
+
 //---------------------
 //API Stuff 
 //User Endpoints
 
 //create user
-app.post('/api/users/new', function (req, res) {
-    res.status(201);
-    let username = req.body.floatingInput;
-    let password = req.body.floatingPassword;
-    const user = {}; //Not sure how to include password for user yet
-    user["name"] = "";
-    user["picture"] = "";
-    user["biography"] = "";
-    user["username"] = username;
-    user["uid"] = Math.floor(Math.random() * 1000000);
-    user["yog"] = 2022;
-    console.log(`username: ${username}, password: ${password}`);
-    res.send("User created");
-    res.redirect('/');
+app.post('/api/users/new', async function (req, res) {
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.createHmac('sha256', salt).update(req.body.password).digest('hex');
+    try {
+        //First, add the user's login credentials to the login database
+        const dbRes1 = await createLogin({'email' : req.body.email, 'username' : req.body.username, 'hash' : hash, 'salt' : salt});
+        
+        //next, create the user profile in the user database
+        const user = {};
+        user["username"] = req.body.username;
+        //Default values for rest of user
+        user["name"] = "Default Name";
+        user["biography"] = "Default Bio";
+        user["posts"] = [];
+        user["yog"] = "2023";
+        const dbRes2 = await createUser(user);
+        res.status(201);
+        res.send();
+    } catch(e) {
+        console.log(e);
+        res.status(500);
+        res.send();
+    }
 });
 
 // login user
-app.post('/signin', (req, res) => {
-    res.status(200);
-    let username = req.body.floatingInput;
-    let password = req.body.floatingPassword;
-    let remember = req.body.checkbox; 
-    console.log(`username: ${username}, password: ${password}, remember-me: ${remember}`);
-    res.redirect('/');
-});
+app.post('/signin', passport.authenticate('local', {failureRedirect: '/login'})); // upon successful login, signinPage/index.js will redirect to the homePage
 
 //update user
 app.post('/api/usersUpdate/:username', async function (req, res) {
@@ -162,6 +203,8 @@ app.post('/api/posts/new', async function (req, res) {//TODO: move the 'add post
                 posts: {"pid" : hashed}
             }
         });
+        res.status(201);
+        res.send();
     } catch(e){
         res.status(500);
         res.send("Error inserting post to user")
@@ -192,7 +235,6 @@ app.get('/api/posts/:id', async function (req, res) {
 app.post('/api/posts/:id/delete', async function (req, res) {
     try {
         const body = req.body;
-        console.log(body);
         await removePost(req.params.id, body["username"]);
         res.status(200);
         res.send("Post deleted");
@@ -246,8 +288,15 @@ app.get("/api/:order/:content", async function(req, res) {
     }
 });
 
-app.listen(process.env.PORT || 80, () => {
-     console.log(`app listening on port ${process.env.PORT || 80}`);
+
+
+//Catch-all route, must be last
+app.get('*', function (req, res) {
+    res.redirect('/home');
+});
+
+app.listen(process.env.PORT || 3000, () => {
+     console.log(`app listening on port ${process.env.PORT || 3000}`);
 });
 
 //--------------
@@ -288,7 +337,7 @@ async function removePost(postID, username) {
                     }
                 }
             });
-    } catch {
+    } catch(e){
         console.log(e);
     }
 }
@@ -296,7 +345,7 @@ async function removePost(postID, username) {
 async function removeUser(userID) {
     try {
         await client.db().collection("posts").deleteOne({uid : userID});//TODO: remove this, we only do username
-    } catch {
+    } catch(e) {
         console.log(e);
     }
 }
@@ -335,7 +384,26 @@ async function createUser(userInfo) {
     try {
         const result = await client.db().collection("users").insertOne(userInfo);
         return result;
-    } catch {
+    } catch(e) {
+        console.log(e);
+    }
+}
+
+//Create a login for User
+async function createLogin(loginInfo) {
+    try {
+        const result = await client.db().collection("logins").insertOne(loginInfo);
+        return result;
+    } catch(e) {
+        console.log(e);
+    }
+}
+
+async function findLoginByEmail(email) {
+    try {
+        const result = await client.db().collection("logins").findOne({email : email});
+        return result;
+    } catch(e) {
         console.log(e);
     }
 }
@@ -345,7 +413,7 @@ async function createPost(postInfo) {
     try {
         const result = await client.db().collection("posts").insertOne(postInfo);
         return result;
-    } catch {
+    } catch(e) {
         console.log(e);
     }
 }
@@ -357,3 +425,4 @@ async function cleanup(){
 }
 process.on('SIGINT', cleanup);
 process.on('SIGTERM', cleanup);
+process.on('SIGQUIT', cleanup);
