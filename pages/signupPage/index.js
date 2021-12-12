@@ -1,10 +1,15 @@
 document.getElementById('submitRegistration').addEventListener('click', async function() {
   const postObj = {};
-  postObj['email'] = document.getElementById('floatingInput').value;
+  const email = document.getElementById('floatingInput').value;
+  postObj['email'] = email;
   postObj['username'] = document.getElementById('floatingUsername').value;
   postObj['password'] = document.getElementById('floatingPassword').value;
   if (document.getElementById('floatingRepeat').value !== postObj['password']) {
     alert('Passwords do not match');
+    return;
+  }
+  if (email.slice(-9).toLowerCase() !== 'umass.edu') {
+    alert('Email must be a umass.edu email');
     return;
   }
 
