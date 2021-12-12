@@ -437,5 +437,9 @@ document.getElementById("editUserSubmit").addEventListener("click", async ()=> {
   });
   location.reload();
 });
+document.getElementById("search").addEventListener("click", () => {
+  const searched = document.getElementById("searchField").value;
+  window.location.href = `/userPages/${searched}`;
+});
 fillInHeader();
 generatePosts();
